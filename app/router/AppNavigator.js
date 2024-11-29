@@ -7,6 +7,7 @@ import CatePage from '../page/cate/CatePage';
 import MinePage from '../page/mine/MinePage';
 import LoginScreen from '../page/login/LoginScreen';
 import ProfilePage from '../page/profile/ProfilePage';
+import RegisterScreen from '../page/login/RegisterScreen';
 
 // 创建栈导航器
 const AppNavigator = createStackNavigator(
@@ -16,12 +17,12 @@ const AppNavigator = createStackNavigator(
         Home: HomePage,
         Cate: CatePage,
         Mine: MinePage,
-        Profile: ProfilePage,  // 新添加的路由
-        Settings: SettingsPage,  // 新添加的路由
-    },
-    {
-        initialRouteName: 'Login',  // 默认加载登录页面
+        Profile: ProfilePage,
+        Register: RegisterScreen
     }
+    // {
+    //     initialRouteName: 'Login',  // 默认加载登录页面
+    // }
 );
 
 // 创建并导出应用容器

@@ -1,47 +1,67 @@
-import React from 'react'
-import { Button, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+
+import { Button, Dialog, } from '@rneui/themed';
+import { View, Text, StyleSheet } from 'react-native';
 
 import axios from 'axios';
 
+const PrefixApi = 'http:192.168.31.10:808/deslre'
+
 const HomePage = () => {
 
+    const [visible, setVisible] = useState(false);
 
-    const getStudentData = () => {
-        axios.get('http://192.168.31.10:808/deslre/test/dev1').then(
-            response => {
-                console.log('成功了------> ', response.data);
-            },
-            error => {
-                console.log('失败了------> ', error);
-            }
-        )
-    }
+    const toggleDialog = async () => {
+        setVisible(!visible);
+        try {
 
-    const btn = () => {
-        fetch('http://192.168.31.10:808/deslre/test/dev1', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then(res => res.json()).then(res => {
-            console.log(res)
-        })
-    }
+            const response = await axios({
+                method: 'post',
+                url: PrefixApi + '/userInfo/login',
+                data: {
+                    'userName': '111',
+                    'passWord': '222'
+                }
+            })
+            console.log('result ======> ', response.data);
+        } catch (error) {
+            console.error('Request failed: ', error.response || error.message);
+        }
+    };
 
     return (
-        <View style={styles.view}>
-            <Text>Home Page</Text>
-            <Button title='点我发送请求' onPress={getStudentData} />
+        <View>
+            <View style={styles.buttonContainer}>
+                <Button
+                    title="Open Simple Dialog"
+                    onPress={toggleDialog}
+                    buttonStyle={styles.button}
+                />
+            </View>
+            <Dialog
+                isVisible={visible}
+                onBackdropPress={toggleDialog}
+            >
+                <Dialog.Title title="Dialog Title" />
+                <Text>Dialog body text. Add relevant information here.</Text>
+            </Dialog>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
-    view: {
-        height: 200,
-        width: 200,
-        backgroundColor: "#84fab0"
-    }
-})
+    button: {
+        borderRadius: 6,
+        width: 220,
+        margin: 20,
+    },
+    buttonContainer: {
+        margin: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
+
+
 
 export default HomePage;
