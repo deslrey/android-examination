@@ -18,22 +18,37 @@ const LoginScreen = ({ navigation }) => {
     const handleLogin = async (values) => {
         setLoading(true);
 
-        axios.post(PrefixApi + '/userInfo/login', {
+        const response = await axios.post(PrefixApi + '/userInfo/login', {
             'userName': values.username,
             'passWord': values.password
-        })
-            .then(response => console.log(response.data))
-            .catch(error => console.log(error));
-
-        setTimeout(() => {
-            setLoading(false);
-            if (values.username === 'test' && values.password === '123456') {
-                Alert.alert('登录成功');
-                navigation.navigate('BottonNavigator'); // 登录成功后跳转到 BottonNavigator
-            } else {
-                Alert.alert('登录失败', '用户名或密码错误');
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
             }
-        }, 1500);
+        })
+
+        console.error('LoginScreen === 30 ===> ',response.data);
+        
+
+        setLoading(false);
+        if (response === null) {
+            Alert.alert('登录失败,服务器异常');
+        } else if (response.data.code === 200) {
+            setLoading(false);
+            navigation.navigate('BottonNavigator'); // 登录成功后跳转到 BottonNavigator
+        } else {
+            Alert.alert(response.data.message);
+        }
+
+        // setTimeout(() => {
+        //     setLoading(false);
+        //     if (values.username === 'test' && values.password === '123456') {
+        //         Alert.alert('登录成功');
+        //         navigation.navigate('BottonNavigator'); // 登录成功后跳转到 BottonNavigator
+        //     } else {
+        //         Alert.alert('登录失败', '用户名或密码错误');
+        //     }
+        // }, 1500);
     };
 
     return (
@@ -47,7 +62,7 @@ const LoginScreen = ({ navigation }) => {
                 {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                     <>
                         <Input
-                            placeholder="用户名"
+                            placeholder="邮箱账号/手机号"
                             onChangeText={handleChange('username')}
                             onBlur={handleBlur('username')}
                             value={values.username}
