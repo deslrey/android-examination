@@ -21,23 +21,27 @@ const RegisterScreen = ({ navigation }) => {
     const handleRegister = async (values) => {
         setLoading(true);
 
-        axios.post(PrefixApi + '/userInfo/register', {
-            'userName': values.username,
+        axios.post(PrefixApi + '/userInfo/emailRegister', {
+            'email': values.username,
             'passWord': values.password
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
         })
             .then(response => {
                 console.log(response.data);
-                Alert.alert('注册成功');
+                Alert.alert(response.data.message);
                 navigation.navigate('Login'); // 注册成功后跳转回登录页面
             })
             .catch(error => {
                 console.log(error);
-                Alert.alert('注册失败', '请检查您的信息是否正确');
+                Alert.alert('注册失败', error.message);
             });
 
-        setTimeout(() => {
-            setLoading(false);
-        }, 1500);
+
+        setLoading(false);
+
     };
 
     return (
