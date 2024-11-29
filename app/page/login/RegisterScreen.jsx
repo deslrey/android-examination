@@ -32,7 +32,9 @@ const RegisterScreen = ({ navigation }) => {
             .then(response => {
                 console.log(response.data);
                 Alert.alert(response.data.message);
-                navigation.navigate('Login'); // 注册成功后跳转回登录页面
+                if (response.data.code === 200) {
+                    navigation.navigate('BottonNavigator'); // 注册成功后跳转主界面
+                }
             })
             .catch(error => {
                 console.log(error);
