@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableWithoutFeedback } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -82,12 +82,14 @@ const RegisterScreen = ({ navigation }) => {
                             loading={loading}
                             buttonStyle={styles.button}
                         />
-                        <Button
-                            title="已有账号？去登录"
-                            onPress={() => navigation.navigate('Login')} // 跳转到登录页面
-                            type="clear"
-                            titleStyle={styles.loginButton}
-                        />
+
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}>
+                            <View style={styles.customButton}>
+                                <Text style={styles.buttonText}>
+                                    已有账号？去登录
+                                </Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                     </>
                 )}
             </Formik>
@@ -116,10 +118,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#0066cc',
         borderRadius: 25,
     },
-    loginButton: {
-        color: '#0066cc',
-        textAlign: 'center',
+    customButton: {
+        // backgroundColor: '#0066cc',
+        paddingVertical: 12,
+        borderRadius: 25,
+        alignItems: 'center',
         marginTop: 10,
+    },
+    buttonText: {
+        color: '#0066cc',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 

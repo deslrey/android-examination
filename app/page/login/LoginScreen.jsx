@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableWithoutFeedback } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-
 import axios from 'axios';
 
 const loginValidationSchema = Yup.object().shape({
@@ -11,11 +10,21 @@ const loginValidationSchema = Yup.object().shape({
     password: Yup.string().min(6, '密码至少为6个字符').required('密码是必填项'),
 });
 
+const PrefixApi = 'http://192.168.31.10:808/deslre'
+
 const LoginScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (values) => {
         setLoading(true);
+
+        axios.post(PrefixApi + '/userInfo/login', {
+            'userName': values.username,
+            'passWord': values.password
+        })
+            .then(response => console.log(response.data))
+            .catch(error => console.log(error));
+
         setTimeout(() => {
             setLoading(false);
             if (values.username === 'test' && values.password === '123456') {
@@ -26,9 +35,6 @@ const LoginScreen = ({ navigation }) => {
             }
         }, 1500);
     };
-
-    // 从服务器获取验证码
-    const getVerificationCode = () => { }
 
     return (
         <View style={styles.container}>
@@ -63,6 +69,14 @@ const LoginScreen = ({ navigation }) => {
                             loading={loading}
                             buttonStyle={styles.button}
                         />
+
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('Register')}>
+                            <View style={styles.customButton}>
+                                <Text style={styles.buttonText}>
+                                    没有账户？去注册
+                                </Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                     </>
                 )}
             </Formik>
@@ -90,6 +104,18 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#0066cc',
         borderRadius: 25,
+    },
+    customButton: {
+        // backgroundColor: '#0066cc',
+        paddingVertical: 12,
+        borderRadius: 25,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    buttonText: {
+        color: '#0066cc',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 
