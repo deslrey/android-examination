@@ -1,0 +1,126 @@
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Alert } from 'react-native';
+import { Input, Button } from 'react-native-elements';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';
+
+const registerValidationSchema = Yup.object().shape({
+    username: Yup.string().required('用户名是必填项'),
+    password: Yup.string().min(6, '密码至少为6个字符').required('密码是必填项'),
+    confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], '密码不一致')
+        .required('确认密码是必填项'),
+});
+
+const PrefixApi = 'http://192.168.31.10:808/deslre'
+
+const RegisterScreen = ({ navigation }) => {
+    const [loading, setLoading] = useState(false);
+
+    const handleRegister = async (values) => {
+        setLoading(true);
+
+        axios.post(PrefixApi + '/userInfo/register', {
+            'userName': values.username,
+            'passWord': values.password
+        })
+            .then(response => {
+                console.log(response.data);
+                Alert.alert('注册成功');
+                navigation.navigate('Login'); // 注册成功后跳转回登录页面
+            })
+            .catch(error => {
+                console.log(error);
+                Alert.alert('注册失败', '请检查您的信息是否正确');
+            });
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 1500);
+    };
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>注册</Text>
+            <Formik
+                initialValues={{ username: '', password: '', confirmPassword: '' }}
+                validationSchema={registerValidationSchema}
+                onSubmit={handleRegister}
+            >
+                {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                    <>
+                        <Input
+                            placeholder="用户名"
+                            onChangeText={handleChange('username')}
+                            onBlur={handleBlur('username')}
+                            value={values.username}
+                            errorMessage={touched.username && errors.username}
+                            containerStyle={styles.inputContainer}
+                        />
+                        <Input
+                            placeholder="密码"
+                            secureTextEntry
+                            onChangeText={handleChange('password')}
+                            onBlur={handleBlur('password')}
+                            value={values.password}
+                            errorMessage={touched.password && errors.password}
+                            containerStyle={styles.inputContainer}
+                        />
+                        <Input
+                            placeholder="确认密码"
+                            secureTextEntry
+                            onChangeText={handleChange('confirmPassword')}
+                            onBlur={handleBlur('confirmPassword')}
+                            value={values.confirmPassword}
+                            errorMessage={touched.confirmPassword && errors.confirmPassword}
+                            containerStyle={styles.inputContainer}
+                        />
+                        <Button
+                            title={loading ? '注册中...' : '注册'}
+                            onPress={handleSubmit}
+                            loading={loading}
+                            buttonStyle={styles.button}
+                        />
+                        <Button
+                            title="已有账号？去登录"
+                            onPress={() => navigation.navigate('Login')} // 跳转到登录页面
+                            type="clear"
+                            titleStyle={styles.loginButton}
+                        />
+                    </>
+                )}
+            </Formik>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: 16,
+        backgroundColor: '#f4f4f9',
+    },
+    title: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 40,
+        color: '#333',
+    },
+    inputContainer: {
+        marginBottom: 20,
+    },
+    button: {
+        backgroundColor: '#0066cc',
+        borderRadius: 25,
+    },
+    loginButton: {
+        color: '#0066cc',
+        textAlign: 'center',
+        marginTop: 10,
+    },
+});
+
+export default RegisterScreen;
