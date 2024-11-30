@@ -1,67 +1,106 @@
-import React, { useState } from 'react';
+import React from 'react';
+import {
+    SafeAreaView,
+    View,
+    FlatList,
+    StyleSheet,
+    Text,
+    StatusBar,
+} from 'react-native';
 
-import { Button, Dialog, } from '@rneui/themed';
-import { View, Text, StyleSheet } from 'react-native';
+const DATA = [];
+const DATA2 = [];
 
-import axios from 'axios';
+const Item = ({ title }) => (
+    <View style={styles.item}>
+        <Text style={styles.title}>{title}</Text>
+    </View>
+);
 
-const PrefixApi = 'http:192.168.31.10:808/deslre'
+const Item2 = ({ title }) => (
+    <View style={styles.item2}>
+        <Text style={styles.title}>{title}</Text>
+    </View>
+);
+
+
 
 const HomePage = () => {
 
-    const [visible, setVisible] = useState(false);
 
-    const toggleDialog = async () => {
-        setVisible(!visible);
-        try {
-
-            const response = await axios({
-                method: 'post',
-                url: PrefixApi + '/userInfo/login',
-                data: {
-                    'userName': '111',
-                    'passWord': '222'
-                }
-            })
-            console.log('result ======> ', response.data);
-        } catch (error) {
-            console.error('Request failed: ', error.response || error.message);
+    const add = () => {
+        for (let index = 1; index <= 20; index++) {
+            let obj = {
+                id: index,
+                title: 'Third Item' + index
+            }
+            DATA2.push(obj)
         }
-    };
+    }
+    const add2 = () => {
+        for (let index = 1; index <= 20; index++) {
+            let obj = {
+                id: index,
+                title: 'Third Item' + index
+            }
+            DATA.push(obj)
+        }
+    }
+    add()
+    add2()
 
     return (
         <View>
-            <View style={styles.buttonContainer}>
-                <Button
-                    title="Open Simple Dialog"
-                    onPress={toggleDialog}
-                    buttonStyle={styles.button}
+            <SafeAreaView>
+                <FlatList
+                    horizontal
+                    data={DATA}
+                    renderItem={({ item }) => <Item title={item.title} />}
+                    keyExtractor={item => item.id}
                 />
-            </View>
-            <Dialog
-                isVisible={visible}
-                onBackdropPress={toggleDialog}
-            >
-                <Dialog.Title title="Dialog Title" />
-                <Text>Dialog body text. Add relevant information here.</Text>
-            </Dialog>
+            </SafeAreaView>
+            <Text style={styles.dividingLine}>=========占位========</Text>
+            <SafeAreaView style={styles.container}>
+                <FlatList
+                    data={DATA2}
+                    renderItem={({ item }) => <Item2 title={item.title} />}
+                    keyExtractor={item => item.id}
+                    numColumns={2} // 每行显示两个项目
+                    contentContainerStyle={styles.listContent} // 设置内容样式
+                />
+            </SafeAreaView>
+
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
-    button: {
-        borderRadius: 6,
-        width: 220,
-        margin: 20,
+    container: {
+        // flex: 1, // 父容器占满屏幕高度
+        marginBottom: '50%',
+        marginTop: StatusBar.currentHeight || 0, // 避免状态栏遮挡
     },
-    buttonContainer: {
-        margin: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
+    listContent: {
+        paddingHorizontal: 8, // 列表内边距
+    },
+    item: {
+        backgroundColor: '#38f9d7',
+        padding: 20,
+        margin: 8, // 调整间距
+        flex: 1, // 在行内均分空间
+    },
+    item2: {
+        backgroundColor: '#4facfe',
+        padding: 20,
+        margin: 8, // 调整间距
+        flex: 1, // 在行内均分空间
+        maxWidth: '48%', // 限制每列的最大宽度
+        alignItems: 'center', // 内容居中
+    },
+    title: {
+        fontSize: 16,
     },
 });
-
 
 
 export default HomePage;
