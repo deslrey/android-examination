@@ -6,50 +6,54 @@ import MinePage from "../mine/MinePage";
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6'; // 引入图标
 
 const BottonNavigator = createBottomTabNavigator(
-    {
-        Home: {
-            screen: HomePage,
-            navigationOptions: {
-                title: '首页',
-                tabBarLabel: '', // 去掉文字标签
-                tabBarIcon: ({ tintColor }) => (
-                    <FontAwesomeIcon name="house-chimney" size={30} color={tintColor} /> // 设置图标
-                ),
-            },
-        },
-        Cate: {
-            screen: CatePage,
-            navigationOptions: {
-                title: '分类',
-                tabBarLabel: '', // 去掉文字标签
-                tabBarIcon: ({ tintColor }) => (
-                    <FontAwesomeIcon name="list-ul" size={30} color={tintColor} /> // 设置图标
-                ),
-            },
-        },
-        Mine: {
-            screen: MinePage,
-            navigationOptions: {
-                title: '我的',
-                tabBarLabel: '', // 去掉文字标签
-                tabBarIcon: ({ tintColor }) => (
-                    <FontAwesomeIcon name="user" size={30} color={tintColor} /> // 设置图标
-                ),
-            },
-        },
+  {
+    Home: {
+      screen: HomePage,
+      navigationOptions: {
+        tabBarLabel: '', // 去掉文字标签
+        tabBarIcon: ({ focused, tintColor }) => (
+          <FontAwesomeIcon 
+            name={focused ? "house" : "house-chimney"} // 根据激活状态切换图标
+            size={30} 
+            color={tintColor} 
+          />
+        ),
+      },
     },
-    {
-        tabBarOptions: {
-            showLabel: false, // 确保完全不显示文字标签
-            labelStyle: {
-                fontSize: 10,
-            },
-            // 图标选中时的颜色
-            activeTintColor: '#4F8EF7',
-            // 图标未选中时的颜色
-            inactiveTintColor: '#888',
-        },
-    }
+    Cate: {
+      screen: CatePage,
+      navigationOptions: {
+        tabBarLabel: '', // 去掉文字标签
+        tabBarIcon: ({ focused, tintColor }) => (
+          <FontAwesomeIcon 
+            name={focused ? "list-alt" : "list-ul"} // 根据激活状态切换图标
+            size={30} 
+            color={tintColor} 
+          />
+        ),
+      },
+    },
+    Mine: {
+      screen: MinePage,
+      navigationOptions: {
+        tabBarLabel: '', // 去掉文字标签
+        tabBarIcon: ({ focused, tintColor }) => (
+          <FontAwesomeIcon 
+            name={focused ? "user-circle" : "user"} // 根据激活状态切换图标
+            size={30} 
+            color={tintColor} 
+          />
+        ),
+      },
+    },
+  },
+  {
+    tabBarOptions: {
+      showLabel: false, // 确保完全不显示文字标签
+      activeTintColor: '#4F8EF7',
+      inactiveTintColor: '#888',
+    },
+  }
 );
 
 export default BottonNavigator;
