@@ -27,8 +27,7 @@ const LoginScreen = ({ navigation }) => {
             }
         })
 
-        console.error('LoginScreen === 30 ===> ',response.data);
-        
+        console.error('LoginScreen === 30 ===> ', response.data);
 
         setLoading(false);
         if (response === null) {

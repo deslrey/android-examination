@@ -16,17 +16,23 @@ const BottonNavigator = createBottomTabNavigator({
         screen: CatePage,
         navigationOptions: {
             title: '分类',
-            tabBarLabel: '分类'
-        }
+            tabBarLabel: '分类',
+        },
     },
     Mine: {
         screen: MinePage,
         navigationOptions: {
             title: '我的',
-            tabBarLabel: '我的'
+            tabBarLabel: '我的',
         }
     },
 
+}, {
+    tabBarOptions: {
+        labelStyle: {
+            fontSize: 18
+        }
+    }
 })
 
 export default BottonNavigator;
