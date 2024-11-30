@@ -24,30 +24,31 @@ const Item2 = ({ title }) => (
     </TouchableOpacity>
 );
 
+const add = () => {
+    for (let index = 1; index <= 20; index++) {
+        let obj = {
+            id: index,
+            title: 'Third Item' + index
+        }
+        DATA2.push(obj);
+    }
+};
+
+const add2 = () => {
+    for (let index = 1; index <= 20; index++) {
+        let obj = {
+            id: index,
+            title: 'Third Item' + index
+        }
+        DATA.push(obj);
+    }
+};
+
+add();
+add2();
+
 const HomePage = () => {
 
-    const add = () => {
-        for (let index = 1; index <= 20; index++) {
-            let obj = {
-                id: index,
-                title: 'Third Item' + index
-            }
-            DATA2.push(obj);
-        }
-    };
-
-    const add2 = () => {
-        for (let index = 1; index <= 20; index++) {
-            let obj = {
-                id: index,
-                title: 'Third Item' + index
-            }
-            DATA.push(obj);
-        }
-    };
-
-    add();
-    add2();
 
     return (
         <View style={styles.mainContainer}>
