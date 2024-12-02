@@ -5,6 +5,7 @@ import { Input, Button } from 'react-native-elements';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 
 const loginValidationSchema = Yup.object().shape({
@@ -19,9 +20,10 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async (values) => {
         setLoading(true);
+        const hashedPassword = CryptoJS.SHA256(values.passWord).toString();
         const response = await axios.post(PrefixApi + '/userInfo/login', {
             'userName': values.username,
-            'passWord': values.password
+            'passWord': hashedPassword
         }, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
