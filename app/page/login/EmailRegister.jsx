@@ -4,6 +4,7 @@ import { Input, Button } from 'react-native-elements';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 // 更新后的邮箱验证正则
 const registerValidationSchema = Yup.object().shape({
@@ -29,10 +30,13 @@ const EmailRegister = ({ navigation }) => {
   const handleRegister = async (values) => {
     setLoading(true);
 
+    // 对密码进行哈希加密
+    const hashedPassword = CryptoJS.SHA256(values.passWord).toString();
+
     axios
       .post(PrefixApi + '/userInfo/emailRegister', {
         email: values.email,
-        passWord: values.passWord,
+        passWord: hashedPassword, // 发送哈希后的密码
       }, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
