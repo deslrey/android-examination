@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Alert, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6';
 import { Input, Button } from 'react-native-elements';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+
 
 const loginValidationSchema = Yup.object().shape({
     username: Yup.string().required('用户名是必填项'),
@@ -17,7 +19,6 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async (values) => {
         setLoading(true);
-
         const response = await axios.post(PrefixApi + '/userInfo/login', {
             'userName': values.username,
             'passWord': values.password
@@ -25,10 +26,8 @@ const LoginScreen = ({ navigation }) => {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
-        })
-
+        });
         console.error('LoginScreen === 30 ===> ', response.data);
-
         setLoading(false);
         if (response === null) {
             Alert.alert('登录失败,服务器异常');
@@ -38,17 +37,15 @@ const LoginScreen = ({ navigation }) => {
         } else {
             Alert.alert(response.data.message);
         }
-
-        // setTimeout(() => {
-        //     setLoading(false);
-        //     if (values.username === 'test' && values.password === '123456') {
-        //         Alert.alert('登录成功');
-        //         navigation.navigate('BottonNavigator'); // 登录成功后跳转到 BottonNavigator
-        //     } else {
-        //         Alert.alert('登录失败', '用户名或密码错误');
-        //     }
-        // }, 1500);
     };
+
+
+    const phoneRegister = () => {
+        navigation.navigate('PhoneRegister');
+    }
+    const envelopeRegister = () => {
+        navigation.navigate('EmailRegiste');
+    }
 
     return (
         <View style={styles.container}>
@@ -83,14 +80,27 @@ const LoginScreen = ({ navigation }) => {
                             loading={loading}
                             buttonStyle={styles.button}
                         />
-
+                        {/* 
                         <TouchableWithoutFeedback onPress={() => navigation.navigate('Register')}>
                             <View style={styles.customButton}>
                                 <Text style={styles.buttonText}>
                                     没有账户？去注册
                                 </Text>
                             </View>
-                        </TouchableWithoutFeedback>
+                        </TouchableWithoutFeedback> */}
+
+                        {/* 添加两个注册按钮 */}
+                        <View style={styles.registerButtonsContainer}>
+                            <TouchableOpacity style={styles.registerButton} onPress={phoneRegister}>
+                                <FontAwesomeIcon name="phone" size={20} color="#fff" />
+                                <Text style={styles.registerButtonText}>手机号注册</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.registerButton} onPress={envelopeRegister}>
+                                <FontAwesomeIcon name="envelope" size={20} color="#fff" />
+                                <Text style={styles.registerButtonText}>邮箱注册</Text>
+                            </TouchableOpacity>
+                        </View>
                     </>
                 )}
             </Formik>
@@ -120,7 +130,6 @@ const styles = StyleSheet.create({
         borderRadius: 25,
     },
     customButton: {
-        // backgroundColor: '#0066cc',
         paddingVertical: 12,
         borderRadius: 25,
         alignItems: 'center',
@@ -129,6 +138,27 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#0066cc',
         fontSize: 16,
+        fontWeight: 'bold',
+    },
+    registerButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+    },
+    registerButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#0066cc',
+        paddingVertical: 12,
+        paddingHorizontal: 15,
+        borderRadius: 25,
+        width: '35%',
+        justifyContent: 'center',
+    },
+    registerButtonText: {
+        color: '#fff',
+        fontSize: 10,
+        marginLeft: 8,
         fontWeight: 'bold',
     },
 });
