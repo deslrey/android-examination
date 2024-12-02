@@ -4,6 +4,8 @@ import { Input, Button } from 'react-native-elements';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
+
 
 const registerValidationSchema = Yup.object().shape({
     phone: Yup.string()
@@ -25,9 +27,11 @@ const PhoneRegister = ({ navigation }) => {
     const handleRegister = async (values) => {
         setLoading(true);
 
+        const hashedPassword = CryptoJS.SHA256(values.passWord).toString();
+
         axios.post(PrefixApi + '/userInfo/phoneRegister', {
             'phone': values.phone,
-            'passWord': values.passWord
+            'passWord': hashedPassword
         }, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
