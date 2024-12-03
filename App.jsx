@@ -73,7 +73,7 @@ const AppStack = createStackNavigator(
 
   },
   {
-    initialRouteName: 'Login',  // 默认加载登录页面
+    initialRouteName: 'BottonNavigator',  // 默认加载登录页面
     mode: 'modal',
     headerMode: 'none'
   }
