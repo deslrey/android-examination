@@ -78,10 +78,12 @@ const MinePage = () => {
                 />
             </ScrollView>
 
+            {/* 设置按钮 */}
             <TouchableOpacity style={styles.settingsButton} onPress={openModal}>
-                <FontAwesomeIcon name="ellipsis" size={30} color="#fff" />  
+                <FontAwesomeIcon name="ellipsis" size={30} color="#fff" />
             </TouchableOpacity>
 
+            {/* 修改个人信息的模态框 */}
             <Modal
                 animationType="slide"
                 transparent={true}
