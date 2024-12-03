@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Alert, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6';
 import { Input, Button } from 'react-native-elements';
 import { Formik } from 'formik';
@@ -9,8 +9,8 @@ import CryptoJS from 'crypto-js';
 
 
 const loginValidationSchema = Yup.object().shape({
-    username: Yup.string().required('用户名是必填项'),
-    password: Yup.string().min(6, '密码至少为6个字符').required('密码是必填项'),
+    userName: Yup.string().required('用户名是必填项'),
+    passWord: Yup.string().min(6, '密码至少为6个字符').required('密码是必填项'),
 });
 
 const PrefixApi = 'http://192.168.31.10:808/deslre'
@@ -22,7 +22,7 @@ const LoginScreen = ({ navigation }) => {
         setLoading(true);
         const hashedPassword = CryptoJS.SHA256(values.passWord).toString();
         const response = await axios.post(PrefixApi + '/userInfo/login', {
-            'userName': values.username,
+            'userName': values.userName,
             'passWord': hashedPassword
         }, {
             headers: {
@@ -53,7 +53,7 @@ const LoginScreen = ({ navigation }) => {
         <View style={styles.container}>
             <Text style={styles.title}>登录</Text>
             <Formik
-                initialValues={{ username: '', password: '' }}
+                initialValues={{ userName: '', passWord: '' }}
                 validationSchema={loginValidationSchema}
                 onSubmit={handleLogin}
             >
@@ -61,19 +61,19 @@ const LoginScreen = ({ navigation }) => {
                     <>
                         <Input
                             placeholder="邮箱账号/手机号"
-                            onChangeText={handleChange('username')}
-                            onBlur={handleBlur('username')}
-                            value={values.username}
-                            errorMessage={touched.username && errors.username}
+                            onChangeText={handleChange('userName')}
+                            onBlur={handleBlur('userName')}
+                            value={values.useruserNamename}
+                            errorMessage={touched.userName && errors.userName}
                             containerStyle={styles.inputContainer}
                         />
                         <Input
                             placeholder="密码"
                             secureTextEntry
-                            onChangeText={handleChange('password')}
-                            onBlur={handleBlur('password')}
-                            value={values.password}
-                            errorMessage={touched.password && errors.password}
+                            onChangeText={handleChange('passWord')}
+                            onBlur={handleBlur('passWord')}
+                            value={values.passWord}
+                            errorMessage={touched.passWord && errors.passWord}
                             containerStyle={styles.inputContainer}
                         />
                         <Button
