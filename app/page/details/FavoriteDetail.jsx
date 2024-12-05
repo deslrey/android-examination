@@ -1,10 +1,11 @@
+import { Text } from '@rneui/themed';
 import React from 'react'
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 const FavoriteDetail = () => {
     return (
         <View>
-            <Text>我是FavoriteDetail组件</Text>
+            <Text h1>我是FavoriteDetail组件</Text>
         </View>
     )
 }

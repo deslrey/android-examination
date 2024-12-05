@@ -1,5 +1,8 @@
 import React from 'react';
 import { Tab, Text, TabView } from '@rneui/themed';
+import CartDetail from '../details/CartDetail';
+import FavoriteDetail from '../details/FavoriteDetail';
+import RecentDetail from '../details/RecentDetail';
 
 const CatePage = () => {
     const [index, setIndex] = React.useState(0);
@@ -33,14 +36,14 @@ const CatePage = () => {
             </Tab>
 
             <TabView value={index} onChange={setIndex} animationType="spring">
-                <TabView.Item style={{ backgroundColor: 'red', width: '100%' }}>
-                    <Text h1>购物车</Text>
+                <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
+                    <CartDetail />
                 </TabView.Item>
-                <TabView.Item style={{ backgroundColor: 'blue', width: '100%' }}>
-                    <Text h1>收藏</Text>
+                <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
+                    <FavoriteDetail />
                 </TabView.Item>
-                <TabView.Item style={{ backgroundColor: 'green', width: '100%' }}>
-                    <Text h1>最近</Text>
+                <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
+                    <RecentDetail />
                 </TabView.Item>
             </TabView>
         </>

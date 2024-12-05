@@ -1,10 +1,11 @@
+import { Text } from '@rneui/themed';
 import React from 'react'
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 const CartDetail = () => {
     return (
         <View>
-            <Text>我是CartDetail组件</Text>
+            <Text h1>我是CartDetail组件</Text>
         </View>
     )
 }
