@@ -1,48 +1,50 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Tab, Text, TabView } from '@rneui/themed';
 
-import { Avatar, ListItem } from '@rneui/themed';
-import LinearGradient from 'react-native-linear-gradient';
-
-const CatePage = ({ navigation }) => {
-
-
-    const btn = () => {
-        console.log('我被点击了');
-        navigation.navigate('Login'); // 登录成功后跳转到 BottonNavigator
-
-    }
-
+const CatePage = () => {
+    const [index, setIndex] = React.useState(0);
 
     return (
         <>
-            <ListItem
-                onPress={btn}
-                linearGradientProps={{
-                    colors: ["#FF9800", "#F44336"],
-                    start: { x: 1, y: 0 },
-                    end: { x: 0.2, y: 0 },
+            <Tab
+                value={index}
+                onChange={(e) => setIndex(e)}
+                indicatorStyle={{
+                    backgroundColor: 'white',
+                    height: 3,
                 }}
-                ViewComponent={LinearGradient}
+                variant="primary"
             >
-                <Avatar
-                    rounded
-                    source={{ uri: "https://randomuser.me/api/portraits/men/33.jpg" }}
+                <Tab.Item
+                    title="购物车"
+                    titleStyle={{ fontSize: 12 }}
+                    icon={{ name: 'cart', type: 'ionicon', color: 'white' }}
                 />
-                <ListItem.Content>
-                    <ListItem.Title style={{ color: "white", fontWeight: "bold" }}>
-                        Chris Jackson
-                    </ListItem.Title>
-                    <ListItem.Subtitle style={{ color: "white" }}>
-                        Vice Chairman
-                    </ListItem.Subtitle>
-                </ListItem.Content>
-                <ListItem.Chevron color="white" />
-            </ListItem>
+                <Tab.Item
+                    title="收藏"
+                    titleStyle={{ fontSize: 12 }}
+                    icon={{ name: 'heart', type: 'ionicon', color: 'white' }}
+                />
+                <Tab.Item
+                    title="最近"
+                    titleStyle={{ fontSize: 12 }}
+                    icon={{ name: 'timer', type: 'ionicon', color: 'white' }}
+                />
+            </Tab>
+
+            <TabView value={index} onChange={setIndex} animationType="spring">
+                <TabView.Item style={{ backgroundColor: 'red', width: '100%' }}>
+                    <Text h1>购物车</Text>
+                </TabView.Item>
+                <TabView.Item style={{ backgroundColor: 'blue', width: '100%' }}>
+                    <Text h1>收藏</Text>
+                </TabView.Item>
+                <TabView.Item style={{ backgroundColor: 'green', width: '100%' }}>
+                    <Text h1>最近</Text>
+                </TabView.Item>
+            </TabView>
         </>
-    )
-}
-
-
+    );
+};
 
 export default CatePage;
