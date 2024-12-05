@@ -69,6 +69,12 @@ const AppStack = createStackNavigator(
       navigationOptions: {
         headerShown: false
       }
+    },
+    SitePage: {
+      screen: SitePage,
+      navigationOptions: {
+        headerShown: false
+      }
     }
 
   },
