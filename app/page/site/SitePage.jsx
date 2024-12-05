@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+import { Button } from 'react-native-elements';
 import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
-
 
 const listData = [
     { id: 1, title: '个人资料' }, { id: 2, title: '账户与安全' }, { id: 3, title: '消息管理与通知' }, { id: 4, title: '青少年模式' },
@@ -14,12 +14,23 @@ const Item = ({ title, onPress }) => (
     </TouchableOpacity>
 );
 
-
 const SitePage = () => {
+
+    const arrowClick = () => {
+        console.log('返回上一页');
+    }
+
+    const handleItemPress = (title) => {
+        console.log(`${title} 被点击`);
+    };
 
     return (
         <>
-            <Text style={styles.siteText}>设置</Text>
+            <View style={styles.headerContainer}>
+                <FontAwesome6Icon style={styles.arrowLeft} name='arrow-left' onPress={arrowClick} />
+                <Text style={styles.siteText}>设置</Text>
+            </View>
+
             <SafeAreaView style={styles.container}>
                 <View style={styles.mainContainer}>
                     <FlatList
@@ -32,11 +43,9 @@ const SitePage = () => {
                     />
                 </View>
             </SafeAreaView>
-
         </>
     )
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -69,10 +78,21 @@ const styles = StyleSheet.create({
     },
     siteText: {
         fontSize: 25,
-        textAlign: 'center',
-        color: '#2af598'
+        color: '#2af598',
+        textAlign: 'center', // 使文字居中
+        flexGrow: 1, // 使文本在容器中填充剩余空间
+        paddingRight: '10%'
+    },
+    arrowLeft: {
+        fontSize: 20,
+        paddingLeft: '5%'
+    },
+    headerContainer: {
+        flexDirection: 'row',  // 将图标和文本排列成一行
+        alignItems: 'center',  // 垂直居中
+        width: '100%',  // 宽度为屏幕宽度
+        paddingVertical: 10,
     }
 });
-
 
 export default SitePage;
