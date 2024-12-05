@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Dimensions } from 'react-native';
-import { Button } from 'react-native-elements';
 import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
 
 const listData = [
@@ -14,10 +13,12 @@ const Item = ({ title, onPress }) => (
     </TouchableOpacity>
 );
 
-const SitePage = () => {
+const SitePage = ({ navigation }) => {
 
     const arrowClick = () => {
         console.log('返回上一页');
+        // navigation.navigate('Mine')
+        navigation.goBack()
     }
 
     const handleItemPress = (title) => {
