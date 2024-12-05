@@ -19,7 +19,7 @@ const Item = ({ title, onPress }) => (
     </TouchableOpacity>
 );
 
-const MinePage = () => {
+const MinePage = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false); // 控制模态框的显示与隐藏
     const [username, setUsername] = useState('张三');  // 用户名
     const [email, setEmail] = useState('zhangsan@example.com'); // 邮箱
@@ -43,6 +43,18 @@ const MinePage = () => {
             },
         ]);
     };
+
+
+    // 跳转到设置界面
+    const Jumpsite = () => {
+        console.log('Jumpsite,我被点击了');
+
+        if (navigation === null) {
+            console.log('navigation为NULL,跳转失败');
+        }
+
+        navigation.navigate('SitePage')
+    }
 
     const chooseAvatar = (source) => {
         const options = {
@@ -125,7 +137,7 @@ const MinePage = () => {
             </View>
 
             {/* 设置按钮 */}
-            <TouchableOpacity style={styles.settingsButton} onPress={openModal}>
+            <TouchableOpacity style={styles.settingsButton} onPress={Jumpsite}>
                 <FontAwesomeIcon name="ellipsis" size={30} color="#fff" />
             </TouchableOpacity>
 

@@ -14,6 +14,7 @@ import RegisterScreen from './app/page/login/RegisterScreen';
 import PhoneRegister from './app/page/login/PhoneRegister';
 import EmailRegiste from './app/page/login/EmailRegister';
 import RegisterButton from './app/page/login/RegisterButton';
+import SitePage from './app/page/site/SitePage';
 import Test from './app/page/test/Test';
 
 // 创建 Stack Navigator

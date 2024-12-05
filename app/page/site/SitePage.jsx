@@ -1,8 +1,11 @@
 import React from 'react'
+import { Text, View } from 'react-native';
 
 const SitePage = () => {
     return (
-        <div>我是个人设置界面</div>
+        <View>
+            <Text>我是SitePage界面</Text>
+        </View>
     )
 }
 
