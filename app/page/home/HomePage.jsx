@@ -9,6 +9,8 @@ import {
     TouchableOpacity, // 导入TouchableOpacity
 } from 'react-native';
 
+import SearchComponent from '../../components/home/SearchComponent';
+
 const DATA = [];
 const DATA2 = [];
 
@@ -52,6 +54,7 @@ const HomePage = () => {
 
     return (
         <View style={styles.mainContainer}>
+            <SearchComponent/>
             <SafeAreaView>
                 <FlatList
                     horizontal
