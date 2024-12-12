@@ -35,7 +35,8 @@ const LoginScreen = ({ navigation }) => {
             Alert.alert('登录失败,服务器异常');
         } else if (response.data.code === 200) {
             setLoading(false);
-            navigation.navigate('BottonNavigator'); // 登录成功后跳转到 BottonNavigator
+            Alert.alert('跳转到主界面');
+            // navigation.navigate('BottonNavigator'); // 注册成功后跳转主界面
         } else {
             Alert.alert(response.data.message);
         }

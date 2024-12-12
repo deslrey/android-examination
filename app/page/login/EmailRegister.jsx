@@ -46,7 +46,8 @@ const EmailRegister = ({ navigation }) => {
         console.log(response.data);
         Alert.alert(response.data.message);
         if (response.data.code === 200) {
-          navigation.navigate('BottonNavigator'); // 注册成功后跳转主界面
+          Alert.alert('跳转到主界面');
+          // navigation.navigate('BottonNavigator'); // 注册成功后跳转主界面
         }
       })
       .catch(error => {
