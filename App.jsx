@@ -14,6 +14,7 @@ import PhoneRegister from './app/page/login/PhoneRegister';
 import EmailRegiste from './app/page/login/EmailRegister';
 import RegisterButton from './app/page/login/RegisterButton';
 import Test from './app/page/test/Test';
+import HomeDeslre from './app/page/home/HomePage';
 
 // 创建 Stack Navigator
 const AppStack = createStackNavigator(
@@ -59,11 +60,17 @@ const AppStack = createStackNavigator(
       navigationOptions: {
         headerShown: false
       }
+    },
+    HomeDeslre: {
+      screen: HomeDeslre,
+      navigationOptions: {
+        headerShown: false
+      }
     }
 
   },
   {
-    initialRouteName: 'Login',  // 默认加载登录页面
+    initialRouteName: 'HomeDeslre',  // 默认加载登录页面
     mode: 'modal',
     headerMode: 'none'
   }
