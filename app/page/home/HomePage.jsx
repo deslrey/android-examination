@@ -1,32 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { ImageBackground, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { MessageProvider, MessageContext } from '../../utils/Message';  // 确保路径正确
 
 // 引入本地图片
 const image = require('../../static/images/lbl.png');
 
 const HomePage = () => {
-    // 用于跟踪签到状态
     const [hasSignedIn, setHasSignedIn] = useState(false);
+
+    // 从 MessageContext 获取 showMessage 方法
+    const { showMessage } = useContext(MessageContext);
 
     // 点击签到按钮时触发的函数
     const handleSignIn = () => {
         setHasSignedIn(true); // 设置为已签到
+        showMessage('签到成功！'); // 调用 showMessage 显示提示
     };
 
     return (
-        <View style={styles.container}>
-            <ImageBackground source={image} style={styles.image}>
-                <View style={styles.signInContainer}>
-                    {hasSignedIn ? (
-                        <Text style={styles.signedInText}>今日已签到</Text>
-                    ) : (
-                        <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
-                            <Text style={styles.signInText}>签到</Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </ImageBackground>
-        </View>
+        <MessageProvider>
+            <View style={styles.container}>
+                <ImageBackground source={image} style={styles.image}>
+                    <View style={styles.signInContainer}>
+                        {hasSignedIn ? (
+                            <Text style={styles.signedInText}>今日已签到</Text>
+                        ) : (
+                            <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
+                                <Text style={styles.signInText}>签到</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                </ImageBackground>
+            </View>
+        </MessageProvider>
     );
 };
 
@@ -64,7 +70,7 @@ const styles = StyleSheet.create({
     },
     signedInText: {
         color: '#6200EE', // 已签到文本颜色
-        fontSize: 30, // 字体大小
+        fontSize: 20, // 字体大小
         fontWeight: 'bold', // 字体加粗
     },
 });
