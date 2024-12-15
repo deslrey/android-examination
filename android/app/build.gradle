@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.react'
+apply plugin: 'kotlin-android'
+// apply plugin: 'kotlin-android-extensions'
 
 import com.android.build.OutputFile
 
@@ -90,29 +92,43 @@ def reactNativeArchitectures() {
 
 android {
     ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace 'com.deslreshop'
+
+    buildFeatures {
+        viewBinding true
+    }
+
     defaultConfig {
         applicationId 'com.deslreshop'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName '1.0'
-          // 启用 RenderScript
         renderscriptTargetApi 26
         renderscriptSupportModeEnabled true
+    }
+
+    compileOptions {
+        // 设置 Java 版本为 14 或更高版本
+        sourceCompatibility = JavaVersion.VERSION_16
+        targetCompatibility = JavaVersion.VERSION_16
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     splits {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
+            universalApk false
             include(*reactNativeArchitectures())
         }
     }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -121,28 +137,23 @@ android {
             keyPassword 'android'
         }
     }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
-    // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // https://developer.android.com/studio/build/configure-apk-splits.html
-            // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
             def versionCodes = ['armeabi-v7a': 1, 'x86': 2, 'arm64-v8a': 3, 'x86_64': 4]
             def abi = output.getFilter(OutputFile.ABI)
-            if (abi != null) {  // null for the universal-debug, universal-release variants
+            if (abi != null) {
                 output.versionCodeOverride =
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
@@ -172,4 +183,3 @@ dependencies {
 apply from: file('../../node_modules/react-native-vector-icons/fonts.gradle')
 
 apply from: file('../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle'); applyNativeModulesAppBuildGradle(project)
-

@@ -1,13 +1,6 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import { NavigationContainer } from '@react-navigation/native'; // 使用 NavigationContainer
+import { createStackNavigator } from '@react-navigation/stack'; // 使用 Stack Navigator
 import LoginScreen from './app/page/login/LoginScreen'; // 登录页面
 import RegisterScreen from './app/page/login/RegisterScreen';
 import PhoneRegister from './app/page/login/PhoneRegister';
@@ -16,64 +9,27 @@ import RegisterButton from './app/page/login/RegisterButton';
 import Test from './app/page/test/Test';
 import HomePage from './app/page/home/HomePage';
 
-// 创建 Stack Navigator
-const AppStack = createStackNavigator(
-  {
-    // 登录界面的路由注册
-    Login: {
-      screen: LoginScreen,
-      navigationOptions: {
-        headerShown: false, // 隐藏 header
-      }
-    },
-    // 注册路由
-    Register: {
-      screen: RegisterScreen,
-      navigationOptions: {
-        headerShown: false, // 隐藏 header
-      }
-    },
+// 引入 MessageProvider
+import { MessageProvider } from './app/utils/Message';
 
-    // 手机号注册
-    PhoneRegister: {
-      screen: PhoneRegister,
-      navigationOptions: {
-        headerShown: false
-      }
-    },
+const Stack = createStackNavigator(); // 创建 Stack Navigator
 
-    // 邮箱注册
-    EmailRegiste: {
-      screen: EmailRegiste,
-      navigationOptions: {
-        headerShown: false
-      }
-    },
-    RegisterButton: {
-      screen: RegisterButton,
-      navigationOptions: {
-        headerShown: false
-      }
-    },
-    Test: {
-      screen: Test,
-      navigationOptions: {
-        headerShown: false
-      }
-    },
-    HomePage: {
-      screen: HomePage,
-      navigationOptions: {
-        headerShown: false
-      }
-    }
+const App = () => {
+  return (
+    <MessageProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="HomePage">
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="PhoneRegister" component={PhoneRegister} options={{ headerShown: false }} />
+          <Stack.Screen name="EmailRegiste" component={EmailRegiste} options={{ headerShown: false }} />
+          <Stack.Screen name="RegisterButton" component={RegisterButton} options={{ headerShown: false }} />
+          <Stack.Screen name="Test" component={Test} options={{ headerShown: false }} />
+          <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </MessageProvider>
+  );
+};
 
-  },
-  {
-    initialRouteName: 'HomePage',  // 默认加载登录页面
-    mode: 'modal',
-    headerMode: 'none'
-  }
-);
-
-export default createAppContainer(AppStack);
+export default App;
