@@ -1,38 +1,93 @@
-import React, { createContext, useState, useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { Text, StyleSheet, Animated } from 'react-native';
 
 // 创建消息上下文
 const MessageContext = createContext();
 
-// 消息组件，负责展示消息
+// 消息组件
 const Message = () => {
-    const { message, setMessage } = useContext(MessageContext);
+    const { message, type, setMessage, duration } = useContext(MessageContext);
+    const [fadeAnim] = useState(new Animated.Value(0)); // 初始透明度为 0
 
-    if (!message) return null; // 如果没有消息，则不显示
+    useEffect(() => {
+        if (message) {
+            // 渐入动画
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
 
-    // 2秒后自动清除消息
-    setTimeout(() => {
-        setMessage('');
-    }, 2000);
+            // 消息显示一段时间后隐藏
+            const timer = setTimeout(() => {
+                // 渐出动画
+                Animated.timing(fadeAnim, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: true,
+                }).start(() => setMessage(''));
+            }, duration || 3000); // 默认 3 秒后消失
+
+            return () => clearTimeout(timer); // 清除定时器
+        }
+    }, [message, duration, fadeAnim]);
+
+    if (!message) return null;
+
+    // 根据类型动态设置样式
+    const getStyles = () => {
+        switch (type) {
+            case 'success':
+                return {
+                    backgroundColor: '#f0f9eb', // 浅绿色
+                    textColor: '#67c23a', // 深绿色
+                };
+            case 'error':
+                return {
+                    backgroundColor: '#fef0f0', // 浅红色
+                    textColor: '#f56c6c', // 深红色
+                };
+            case 'warning':
+                return {
+                    backgroundColor: '#fdf6ec',
+                    textColor: '#e6a23c'
+                }
+            default:
+                return {
+                    backgroundColor: '#d1ecf1', // 浅蓝色
+                    textColor: '#0c5460', // 深蓝色
+                };
+        }
+    };
+
+    const { backgroundColor, textColor } = getStyles();
 
     return (
-        <View style={styles.messageContainer}>
-            <Text style={styles.messageText}>{message}</Text>
-        </View>
+        <Animated.View
+            style={[
+                styles.messageContainer,
+                { opacity: fadeAnim, backgroundColor: backgroundColor },
+            ]}
+        >
+            <Text style={[styles.messageText, { color: textColor }]}>{message}</Text>
+        </Animated.View>
     );
 };
 
-// 提供显示消息的组件
+// 提供消息上下文的组件
 const MessageProvider = ({ children }) => {
     const [message, setMessage] = useState('');
+    const [type, setType] = useState('success'); // 默认类型
+    const [duration, setDuration] = useState(3000); // 默认 3 秒
 
-    // 显示消息的函数，类似 Element UI 的 Message
-    const showMessage = (msg) => {
+    const showMessage = (msg, time = 3000, msgType = 'success') => {
         setMessage(msg);
+        setType(msgType);
+        setDuration(time);
     };
 
     return (
-        <MessageContext.Provider value={{ message, setMessage, showMessage }}>
+        <MessageContext.Provider value={{ message, type, setMessage, showMessage, duration }}>
             <Message />
             {children}
         </MessageContext.Provider>
@@ -43,17 +98,21 @@ const MessageProvider = ({ children }) => {
 const styles = StyleSheet.create({
     messageContainer: {
         position: 'absolute',
-        top: 50, // 距离顶部的位置
+        top: 30,
         left: '10%',
         right: '10%',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)', // 半透明黑色背景
-        padding: 10,
-        borderRadius: 5,
-        zIndex: 1000, // 确保显示在其他组件之上
+        padding: 15,
+        borderRadius: 10, // 圆角
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+        elevation: 8,
+        zIndex: 1000,
     },
     messageText: {
-        color: '#fff',
         fontSize: 16,
+        fontWeight: 'bold',
         textAlign: 'center',
     },
 });
