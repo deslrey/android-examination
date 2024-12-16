@@ -5,7 +5,7 @@ import { MessageProvider, MessageContext } from '../../utils/Message'; // 确保
 // 引入本地图片
 const image = require('../../static/images/lbl.png');
 
-const HomePage = () => {
+const HomePage = ({ navigation }) => {
     const [hasSignedIn, setHasSignedIn] = useState(false);
 
     // 从 MessageContext 获取 showMessage 方法
@@ -15,6 +15,16 @@ const HomePage = () => {
     const handleSignIn = () => {
         setHasSignedIn(true); // 设置为已签到
         showMessage('签到成功！'); // 调用 showMessage 显示提示
+    };
+
+    const toLearn = () => {
+        console.log('toLearn被点击了');
+        navigation.navigate('Learn');
+    };
+
+    const toReview = () => {
+        console.log('toReview被点击了');
+        navigation.navigate('Review');
     };
 
     return (
@@ -30,14 +40,14 @@ const HomePage = () => {
                             </TouchableOpacity>
                         )}
                     </View>
-                    {/* 增加两个盒子 */}
+                    {/* 修改两个盒子 */}
                     <View style={styles.boxContainer}>
-                        <View style={styles.box}>
-                            <Text style={styles.boxText}>盒子1</Text>
-                        </View>
-                        <View style={styles.box}>
-                            <Text style={styles.boxText}>盒子2</Text>
-                        </View>
+                        <TouchableOpacity style={styles.box} onPress={toLearn}>
+                            <Text style={styles.boxText}>Learn</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.box} onPress={toReview}>
+                            <Text style={styles.boxText}>Review</Text>
+                        </TouchableOpacity>
                     </View>
                 </ImageBackground>
             </View>
@@ -88,7 +98,7 @@ const styles = StyleSheet.create({
         marginBottom: 50, // 与底部的间距
     },
     box: {
-        backgroundColor: 'rgba(255, 255, 255, 0.7)', // 浅白色背景（透明度为0.8）
+        backgroundColor: 'rgba(255, 255, 255, 0.7)', // 浅白色背景（透明度为0.7）
         width: 150, // 盒子宽度
         height: 70, // 盒子高度
         borderRadius: 10, // 圆角
