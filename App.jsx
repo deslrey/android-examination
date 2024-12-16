@@ -11,6 +11,8 @@ import HomePage from './app/page/home/HomePage';
 
 // 引入 MessageProvider
 import { MessageProvider } from './app/utils/Message';
+import LearnComponent from './app/components/LearnComponent';
+import ReviewComponent from './app/components/ReviewComponent';
 
 const Stack = createStackNavigator(); // 创建 Stack Navigator
 
@@ -26,6 +28,8 @@ const App = () => {
           <Stack.Screen name="RegisterButton" component={RegisterButton} options={{ headerShown: false }} />
           <Stack.Screen name="Test" component={Test} options={{ headerShown: false }} />
           <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }} />
+          <Stack.Screen name="Learn" component={LearnComponent} options={{ headerShown: false }} />
+          <Stack.Screen name="Review" component={ReviewComponent} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </MessageProvider>
