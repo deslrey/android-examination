@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { ImageBackground, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import { MessageProvider, MessageContext } from '../../utils/Message';  // 确保路径正确
+import { MessageProvider, MessageContext } from '../../utils/Message'; // 确保路径正确
 
 // 引入本地图片
 const image = require('../../static/images/lbl.png');
@@ -29,6 +29,15 @@ const HomePage = () => {
                                 <Text style={styles.signInText}>签到</Text>
                             </TouchableOpacity>
                         )}
+                    </View>
+                    {/* 增加两个盒子 */}
+                    <View style={styles.boxContainer}>
+                        <View style={styles.box}>
+                            <Text style={styles.boxText}>盒子1</Text>
+                        </View>
+                        <View style={styles.box}>
+                            <Text style={styles.boxText}>盒子2</Text>
+                        </View>
                     </View>
                 </ImageBackground>
             </View>
@@ -71,6 +80,29 @@ const styles = StyleSheet.create({
     signedInText: {
         color: '#6200EE', // 已签到文本颜色
         fontSize: 20, // 字体大小
+        fontWeight: 'bold', // 字体加粗
+    },
+    boxContainer: {
+        flexDirection: 'row', // 水平排列两个盒子
+        justifyContent: 'space-around', // 盒子之间平均分布
+        marginBottom: 50, // 与底部的间距
+    },
+    box: {
+        backgroundColor: 'rgba(255, 255, 255, 0.7)', // 浅白色背景（透明度为0.8）
+        width: 150, // 盒子宽度
+        height: 70, // 盒子高度
+        borderRadius: 10, // 圆角
+        justifyContent: 'center', // 垂直居中
+        alignItems: 'center', // 水平居中
+        shadowColor: '#000', // 阴影颜色
+        shadowOffset: { width: 0, height: 4 }, // 阴影偏移
+        shadowOpacity: 0.2, // 阴影透明度
+        shadowRadius: 4, // 阴影半径
+        elevation: 5, // Android 阴影
+    },
+    boxText: {
+        color: '#000', // 字体颜色为黑色
+        fontSize: 16, // 字体大小
         fontWeight: 'bold', // 字体加粗
     },
 });
