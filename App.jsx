@@ -28,7 +28,27 @@ const App = () => {
           <Stack.Screen name="RegisterButton" component={RegisterButton} options={{ headerShown: false }} />
           <Stack.Screen name="Test" component={Test} options={{ headerShown: false }} />
           <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }} />
-          <Stack.Screen name="Learn" component={LearnComponent} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Learn"
+            component={LearnComponent}
+            options={{
+              headerShown: false,
+              cardStyleInterpolator: ({ current, next, layouts }) => {
+                return {
+                  cardStyle: {
+                    transform: [
+                      {
+                        translateY: current.progress.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [layouts.screen.height, 0],  // 从屏幕底部到顶部
+                        }),
+                      },
+                    ],
+                  },
+                };
+              },
+            }}
+          />
           <Stack.Screen name="Review" component={ReviewComponent} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
