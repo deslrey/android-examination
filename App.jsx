@@ -11,8 +11,8 @@ import HomePage from './app/page/home/HomePage';
 
 // 引入 MessageProvider
 import { MessageProvider } from './app/utils/Message';
-import LearnComponent from './app/components/LearnComponent';
-import ReviewComponent from './app/components/ReviewComponent';
+import LearnComponent from './app/components/boxs/LearnComponent';
+import ReviewComponent from './app/components/boxs/ReviewComponent';
 
 const Stack = createStackNavigator(); // 创建 Stack Navigator
 
