@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
-import { MessageProvider } from '../../utils/Message';
 import { useNavigation } from '@react-navigation/native';
 import BoxComponent from '../../components/boxs/BoxComponent';
 import SignInButton from '../../components/sign/SignInButton';
@@ -15,17 +14,15 @@ const HomePage = () => {
 
 
     return (
-        <MessageProvider>
-            <View style={styles.container}>
-                <ImageBackground source={image} style={styles.image}>
-                    <SignInButton hasSignedIn={hasSignedIn} onSignIn={handleSignIn} />
-                    <View style={styles.boxContainer}>
-                        <BoxComponent title="Learn" onPress={toLearn} />
-                        <BoxComponent title="Review" onPress={toReview} />
-                    </View>
-                </ImageBackground>
-            </View>
-        </MessageProvider>
+        <View style={styles.container}>
+            <ImageBackground source={image} style={styles.image}>
+                <SignInButton hasSignedIn={hasSignedIn} onSignIn={handleSignIn} />
+                <View style={styles.boxContainer}>
+                    <BoxComponent title="Learn" onPress={toLearn} />
+                    <BoxComponent title="Review" onPress={toReview} />
+                </View>
+            </ImageBackground>
+        </View>
     );
 };
 
