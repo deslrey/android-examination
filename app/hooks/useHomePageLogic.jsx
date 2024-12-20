@@ -18,11 +18,27 @@ const useHomePageLogic = (navigation) => {
         navigation.navigate('Review');
     };
 
+
+    const toCode = () => {
+        navigation.navigate('Code');
+    };
+
+    const toCubesStack = () => {
+        navigation.navigate('CubesStack');
+    };
+
+    const toLeaning = () => {
+        navigation.navigate('Leaning');
+    };
+
     return {
         hasSignedIn,
         handleSignIn,
         toLearn,
         toReview,
+        toCode,
+        toCubesStack,
+        toLeaning
     };
 };
 

@@ -11,13 +11,9 @@ const image = require('../../static/images/lbl.png');
 const HomePage = () => {
 
     const navigation = useNavigation();
-    const { hasSignedIn, handleSignIn, toLearn, toReview } = useHomePageLogic(navigation);
+    const { hasSignedIn, handleSignIn, toLearn, toReview, toCode, toCubesStack, toLeaning } = useHomePageLogic(navigation);
 
-    // 处理点击图标的事件
-    const handleIconPress = (iconName) => {
-        console.log(`Clicked ${iconName}`);
-        // 可以根据 iconName 做不同的导航或操作
-    };
+
 
     return (
         <View style={styles.container}>
@@ -30,13 +26,13 @@ const HomePage = () => {
 
                 {/* 下面三个图标 */}
                 <View style={styles.iconContainer}>
-                    <TouchableOpacity onPress={() => handleIconPress('home')}>
+                    <TouchableOpacity onPress={toCode}>
                         <Icon name="code" size={30} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleIconPress('search')}>
+                    <TouchableOpacity onPress={toCubesStack}>
                         <Icon name="cubes-stacked" size={30} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleIconPress('user')}>
+                    <TouchableOpacity onPress={toLeaning}>
                         <Icon name="lines-leaning" size={30} color="black" />
                     </TouchableOpacity>
                 </View>

@@ -13,6 +13,9 @@ import HomePage from './app/page/home/HomePage';
 import { MessageProvider } from './app/utils/Message';
 import LearnComponent from './app/components/boxs/LearnComponent';
 import ReviewComponent from './app/components/boxs/ReviewComponent';
+import CodePage from './app/page/code/CodePage';
+import CubesStackPage from './app/page/cubes/CubesStackPage';
+import LeaningPage from './app/page/lines/LeaningPage';
 
 const Stack = createStackNavigator(); // 创建 Stack Navigator
 
@@ -33,23 +36,59 @@ const App = () => {
             component={LearnComponent}
             options={{
               headerShown: false,
-              cardStyleInterpolator: ({ current, next, layouts }) => {
-                return {
-                  cardStyle: {
-                    transform: [
-                      {
-                        translateY: current.progress.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [layouts.screen.height, 0],  // 从屏幕底部到顶部
-                        }),
-                      },
-                    ],
-                  },
-                };
-              },
             }}
           />
           <Stack.Screen name="Review" component={ReviewComponent} options={{ headerShown: false }} />
+          <Stack.Screen name="Code" component={CodePage} options={{
+            headerShown: false,
+            cardStyleInterpolator: ({ current, next, layouts }) => {
+              return {
+                cardStyle: {
+                  transform: [
+                    {
+                      translateY: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [layouts.screen.height, 0],  // 从屏幕底部到顶部
+                      }),
+                    },
+                  ],
+                },
+              };
+            },
+          }} />
+          <Stack.Screen name="CubesStack" component={CubesStackPage} options={{
+            headerShown: false,
+            cardStyleInterpolator: ({ current, next, layouts }) => {
+              return {
+                cardStyle: {
+                  transform: [
+                    {
+                      translateY: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [layouts.screen.height, 0],  // 从屏幕底部到顶部
+                      }),
+                    },
+                  ],
+                },
+              };
+            },
+          }} />
+          <Stack.Screen name="Leaning" component={LeaningPage} options={{
+            headerShown: false, cardStyleInterpolator: ({ current, next, layouts }) => {
+              return {
+                cardStyle: {
+                  transform: [
+                    {
+                      translateY: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [layouts.screen.height, 0],  // 从屏幕底部到顶部
+                      }),
+                    },
+                  ],
+                },
+              };
+            },
+          }} />
         </Stack.Navigator>
       </NavigationContainer>
     </MessageProvider>
