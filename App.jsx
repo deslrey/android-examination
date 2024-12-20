@@ -16,6 +16,7 @@ import ReviewComponent from './app/components/boxs/ReviewComponent';
 import CodePage from './app/page/code/CodePage';
 import CubesStackPage from './app/page/cubes/CubesStackPage';
 import LeaningPage from './app/page/lines/LeaningPage';
+import ProfilePage from './app/page/profile/ProfilePage';
 
 const Stack = createStackNavigator(); // 创建 Stack Navigator
 
@@ -82,6 +83,25 @@ const App = () => {
                       translateY: current.progress.interpolate({
                         inputRange: [0, 1],
                         outputRange: [layouts.screen.height, 0],  // 从屏幕底部到顶部
+                      }),
+                    },
+                  ],
+                },
+              };
+            },
+          }} />
+
+          {/* ProfilePage 这里是重点修改 */}
+          <Stack.Screen name="Profile" component={ProfilePage} options={{
+            headerShown: false,
+            cardStyleInterpolator: ({ current, next, layouts }) => {
+              return {
+                cardStyle: {
+                  transform: [
+                    {
+                      translateX: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [-layouts.screen.width, 0],  // 从屏幕左侧滑入
                       }),
                     },
                   ],
