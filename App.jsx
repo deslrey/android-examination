@@ -1,6 +1,10 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native'; // 使用 NavigationContainer
 import { createStackNavigator } from '@react-navigation/stack'; // 使用 Stack Navigator
+
+// 引入 MessageProvider
+import { MessageProvider } from './app/utils/Message';
+
 import LoginScreen from './app/page/login/LoginScreen'; // 登录页面
 import RegisterScreen from './app/page/login/RegisterScreen';
 import PhoneRegister from './app/page/login/PhoneRegister';
@@ -8,9 +12,6 @@ import EmailRegiste from './app/page/login/EmailRegister';
 import RegisterButton from './app/page/login/RegisterButton';
 import Test from './app/page/test/Test';
 import HomePage from './app/page/home/HomePage';
-
-// 引入 MessageProvider
-import { MessageProvider } from './app/utils/Message';
 import LearnComponent from './app/components/boxs/LearnComponent';
 import ReviewComponent from './app/components/boxs/ReviewComponent';
 import CodePage from './app/page/code/CodePage';
