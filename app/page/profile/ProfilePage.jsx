@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, Image, StyleSheet, Dimensions } from 'react-native';
+import { View, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Text, Button } from 'react-native-elements';
+import { useNavigation } from '@react-navigation/native';
+
 
 const { width } = Dimensions.get('window');  // 获取屏幕宽度
 
 const ProfilePage = () => {
+
+    // 添加路由进行跳转
+    const navigation = useNavigation();
+
     const user = {
         name: '张三',
         gender: '男',
@@ -14,32 +20,52 @@ const ProfilePage = () => {
         avatar: require('../../static/avatars/avatar.jpg') // 使用本地头像
     };
 
+    const updateName = () => {
+        navigation.navigate('updateName')
+    }
+
+    const updateGender = () => {
+        navigation.navigate('updateGender')
+    }
+
+    const updatePhone = () => {
+        navigation.navigate('updatePhone')
+    }
+
+    const updateEmail = () => {
+        navigation.navigate('updateEmail')
+    }
+
+
     return (
         <View style={styles.container}>
             {/* 用户头像 */}
             <Image source={user.avatar} style={styles.avatar} />
 
-            {/* 用户昵称 */}
-            <Text h3 style={styles.name}>{user.name}</Text>
-
             {/* 用户信息 */}
             <View style={styles.infoContainer}>
-                <View style={styles.infoRow}>
+
+                <TouchableOpacity style={styles.infoRow} onPress={updateName} activeOpacity={1}>
+                    <Text style={styles.infoLabel}>昵称</Text>
+                    <Text style={styles.infoValue}>{user.name}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.infoRow} onPress={updateGender} activeOpacity={1}>
                     <Text style={styles.infoLabel}>性别</Text>
                     <Text style={styles.infoValue}>{user.gender}</Text>
-                </View>
-                <View style={styles.infoRow}>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.infoRow}>
                     <Text style={styles.infoLabel}>账户ID</Text>
                     <Text style={styles.infoValue}>{user.accountId}</Text>
-                </View>
-                <View style={styles.infoRow}>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.infoRow} onPress={updatePhone} activeOpacity={1}>
                     <Text style={styles.infoLabel}>手机号</Text>
                     <Text style={styles.infoValue}>{user.phone}</Text>
-                </View>
-                <View style={styles.infoRow}>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.infoRow} onPress={updateEmail} activeOpacity={1}>
                     <Text style={styles.infoLabel}>邮箱</Text>
                     <Text style={styles.infoValue}>{user.email}</Text>
-                </View>
+                </TouchableOpacity>
             </View>
 
             {/* 退出登录按钮 */}
@@ -49,7 +75,7 @@ const ProfilePage = () => {
                 titleStyle={styles.logoutButtonTitle}
                 onPress={() => console.log('退出登录')}
             />
-        </View>
+        </View >
     );
 };
 
@@ -103,12 +129,12 @@ const styles = StyleSheet.create({
     logoutButton: {
         backgroundColor: '#f43b47',
         width: 250,
-        marginTop: 30,
+        marginTop: 10,
         paddingVertical: 15,
         borderRadius: 5,
     },
     logoutButtonTitle: {
-        fontSize: 18,
+        fontSize: 16,
         color: '#fff',
         fontWeight: '700',
         textAlign: 'center'
