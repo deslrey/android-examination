@@ -43,18 +43,6 @@ const MinePage = ({ navigation }) => {
         ]);
     };
 
-
-    // 跳转到设置界面
-    const Jumpsite = () => {
-        console.log('Jumpsite,我被点击了');
-
-        if (navigation === null) {
-            console.log('navigation为NULL,跳转失败');
-        }
-
-        navigation.navigate('SitePage')
-    }
-
     const chooseAvatar = (source) => {
         const options = {
             cropping: true,  // 启用裁剪功能
@@ -84,9 +72,6 @@ const MinePage = ({ navigation }) => {
         }
     };
 
-    const handleItemPress = (title) => {
-        console.log(`${title} 被点击`);
-    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -101,30 +86,8 @@ const MinePage = ({ navigation }) => {
                         containerStyle={styles.avatar}
                         onPress={avatarClick}
                     />
-                    <Text style={styles.username}>{username}</Text>
-                    <Text style={styles.userInfo}>邮箱: {email}</Text>
-                    <Text style={styles.userInfo}>手机号: {phone}</Text>
                 </View>
-
-                <View style={styles.bioContainer}>
-                    <Text style={styles.bioText}>个人简介: 买买买</Text>
-                </View>
-
-                {/* 功能项列表 */}
-                <FlatList
-                    data={Data}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <Item title={item.title} onPress={() => handleItemPress(item.title)} />
-                    )}
-                    contentContainerStyle={styles.listContainer}
-                />
             </View>
-
-            {/* 设置按钮 */}
-            <TouchableOpacity style={styles.settingsButton} onPress={Jumpsite}>
-                <FontAwesomeIcon name="ellipsis" size={30} color="#fff" />
-            </TouchableOpacity>
         </SafeAreaView>
     );
 };
@@ -148,30 +111,6 @@ const styles = StyleSheet.create({
     avatar: {
         backgroundColor: '#8fd3f4',
     },
-    username: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginTop: 10,
-    },
-    userInfo: {
-        fontSize: 14,
-        color: '#fff',
-        marginTop: 5,
-    },
-    bioContainer: {
-        paddingHorizontal: 20,
-        marginBottom: 15,
-    },
-    bioText: {
-        fontSize: 16,
-        color: '#333',
-        fontStyle: 'italic',
-    },
-    listContainer: {
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-    },
     item: {
         backgroundColor: '#38f9d7',
         paddingVertical: 15,
@@ -188,24 +127,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#fff',
-    },
-    settingsButton: {
-        position: 'absolute',
-        top: 20,
-        left: 20,
-        backgroundColor: '#38f9d7',
-        padding: 10,
-        borderRadius: 50,
-        elevation: 5,
-    },
-    input: {
-        height: 40,
-        borderColor: '#ccc',
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingLeft: 10,
-        marginBottom: 15,
-    },
+    }
 });
 
 export default MinePage;
