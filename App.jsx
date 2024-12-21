@@ -17,6 +17,10 @@ import CodePage from './app/page/code/CodePage';
 import CubesStackPage from './app/page/cubes/CubesStackPage';
 import LeaningPage from './app/page/lines/LeaningPage';
 import ProfilePage from './app/page/profile/ProfilePage';
+import EmailComponent from './app/components/profile/EmailComponent';
+import GenderComponent from './app/components/profile/GenderComponent';
+import NameComponent from './app/components/profile/NameComponent';
+import PhoneComponent from './app/components/profile/PhoneComponent';
 
 const Stack = createStackNavigator(); // 创建 Stack Navigator
 
@@ -109,6 +113,11 @@ const App = () => {
               };
             },
           }} />
+          <Stack.Screen name="updateEmail" component={EmailComponent} options={{ title: '修改邮箱' }} />
+          <Stack.Screen name="updateGender" component={GenderComponent} options={{ headerShown: false }} />
+          <Stack.Screen name="updateName" component={NameComponent} options={{ headerShown: false }} />
+          <Stack.Screen name="updatePhone" component={PhoneComponent} options={{ headerShown: false }} />
+
         </Stack.Navigator>
       </NavigationContainer>
     </MessageProvider>
