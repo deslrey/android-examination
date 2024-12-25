@@ -122,6 +122,8 @@ const ChapterDetailComponent = ({ route, navigation }) => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Icon name="arrow-left" size={20} color="#fff" />
                 </TouchableOpacity>
+                <Text style={styles.progressText}>{currentIndex + 1}/{words.length}</Text>
+
                 <Text style={styles.headerTitle}>第 {chapterNumber} 章单词刷题</Text>
             </View>
 
@@ -215,6 +217,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         color: '#fff',
+    },
+    progressText: {
+        fontSize: 16,
+        color: '#fff',
+        position: 'absolute',
+        right: 16,
     },
     content: {
         flex: 1,
