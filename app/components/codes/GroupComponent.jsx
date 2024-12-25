@@ -1,14 +1,28 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-const GroupComponent = () => {
+const GroupComponent = ({ route }) => {
+    const { id } = route.params;
+
     return (
-        <View>
-            <Text>GroupComponent</Text>
+        <View style={styles.container}>
+            <Text style={styles.text}>Group Component</Text>
+            <Text style={styles.text}>ID: {id}</Text>
         </View>
-    )
-}
+    );
+};
 
-export default GroupComponent
+export default GroupComponent;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f9f9f9',
+    },
+    text: {
+        fontSize: 18,
+        color: '#333',
+    },
+});
