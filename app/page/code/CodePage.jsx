@@ -1,41 +1,84 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { FlatList, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome6'; // 使用FontAwesome6图标库
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Mater from 'react-native-vector-icons/MaterialCommunityIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+
+const PrefixApi = 'http://192.168.31.10:808/deslre';
+const url = {
+    getCategory: '/books/getCategory',
+};
 
 const CodePage = () => {
-    const [data, setData] = useState([
-        {
-            id: '1',
-            title: 'Java',
-            icon: <Icon name="java" size={30} />,
-            subItems: [
-                { id: '1-1', title: 'Introduction to Java' },
-                { id: '1-2', title: 'Java for Backend Development' },
-            ],
-        },
-        {
-            id: '2',
-            title: 'Go',
-            icon: <Mater name="language-go" size={30} />,
-            subItems: [
-                { id: '2-1', title: 'Getting Started with Go' },
-                { id: '2-2', title: 'Go for Microservices' },
-            ],
-        },
-        {
-            id: '3',
-            title: 'Python',
-            icon: <Mater name="language-python" size={30} />,
-            subItems: [
-                { id: '3-1', title: 'Python Basics' },
-                { id: '3-2', title: 'Data Science with Python' },
-            ],
-        },
-    ]);
-
-    // 记录哪些父类是展开的
+    const [data, setData] = useState([]);
     const [expanded, setExpanded] = useState({});
+
+    // 获取数据并设置到 state
+    const getCategory = async () => {
+        try {
+            const response = await axios.post(
+                PrefixApi + url.getCategory,
+                { category: '代码练习' },
+                { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+            );
+
+            const result = response.data;
+            console.log('result =====> ', result);
+
+            if (result.code === 200) {
+                const transformedData = transformData(result.data);
+                setData(transformedData);
+            } else {
+                console.error('Error fetching data:', result.message);
+            }
+        } catch (error) {
+            console.error('Request failed:', error);
+        }
+    };
+
+    // 转换数据结构
+    const transformData = (rawData) => {
+        const languageIcons = {
+            Java: <Icon name="java" size={30} />,
+            Python: <Mater name="language-python" size={30} />,
+            golang: <Mater name="language-go" size={30} />,
+            Cpp: <Mater name="language-cpp" size={30} />,
+            JavaScript: <Mater name="language-javascript" size={30} />,
+            Linux: <Icon name="linux" size={30} />,
+            Csharp: <Mater name="language-csharp" size={30} />,
+            SQL: <Fontisto name="mysql" size={30} />,
+            AI: <FontAwesome5 name="airbnb" size={30} />,
+            // Arduino: <Mater name="arduino" size={30} />,
+        };
+
+        return rawData.reduce((acc, item) => {
+            const language = item.tags.split('&')[0];
+            const icon = languageIcons[language] || <Icon name="book" size={30} />;
+
+            const existingCategory = acc.find((cat) => cat.title === language);
+            if (existingCategory) {
+                existingCategory.subItems.push({
+                    id: `${item.id}`,
+                    title: item.bookName,
+                });
+            } else {
+                acc.push({
+                    id: `${acc.length + 1}`,
+                    title: language,
+                    icon,
+                    subItems: [
+                        {
+                            id: `${item.id}`,
+                            title: item.bookName,
+                        },
+                    ],
+                });
+            }
+            return acc;
+        }, []);
+    };
 
     // 切换展开状态
     const toggleExpand = (id) => {
@@ -45,7 +88,6 @@ const CodePage = () => {
     // 子类点击事件
     const handleSubItemPress = (subItem) => {
         console.log(`Clicked on ${subItem.title}`);
-        // 这里可以添加导航或其他逻辑
     };
 
     // 渲染子类
@@ -66,10 +108,7 @@ const CodePage = () => {
         const isExpanded = expanded[item.id];
         return (
             <View style={styles.itemContainer}>
-                <TouchableOpacity
-                    style={styles.titleRow}
-                    onPress={() => toggleExpand(item.id)}
-                >
+                <TouchableOpacity style={styles.titleRow} onPress={() => toggleExpand(item.id)}>
                     {item.icon}
                     <Text style={styles.titleText}>{item.title}</Text>
                 </TouchableOpacity>
@@ -77,6 +116,11 @@ const CodePage = () => {
             </View>
         );
     };
+
+    // 初始加载数据
+    useEffect(() => {
+        getCategory();
+    }, []);
 
     return (
         <FlatList
