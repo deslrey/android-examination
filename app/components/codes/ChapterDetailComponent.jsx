@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6'; // 引入图标组件
 import axios from 'axios';
+import Sound from 'react-native-sound'; // 引入 react-native-sound
 
 const PrefixApi = 'http://192.168.31.10:808/deslre';
 
@@ -16,6 +17,7 @@ const ChapterDetailComponent = ({ route, navigation }) => {
     const [currentIndex, setCurrentIndex] = useState(0); // 当前单词索引
     const [showTranslation, setShowTranslation] = useState(false); // 是否显示翻译
     const [loading, setLoading] = useState(false); // 加载状态
+    const [sound, setSound] = useState(); // 音频播放
 
     // 获取当前章节的单词数据
     const getPageData = async () => {
@@ -61,6 +63,21 @@ const ChapterDetailComponent = ({ route, navigation }) => {
         }
     };
 
+    // 播放音频
+    const playSound = (url) => {
+        const sound = new Sound(url, null, (error) => {
+            if (error) {
+                console.log('Failed to load sound', error);
+                return;
+            }
+            sound.play(() => {
+                console.log('Sound finished playing');
+            });
+        });
+
+        setSound(sound);
+    };
+
     // 当前单词数据
     const currentWord = words[currentIndex];
 
@@ -80,33 +97,50 @@ const ChapterDetailComponent = ({ route, navigation }) => {
                     <Text style={styles.loadingText}>加载中...</Text>
                 ) : currentWord ? (
                     <>
+                        {/* 单词 */}
                         <Text style={styles.wordText}>{currentWord.word}</Text>
+
+                        {/* 释义 */}
                         <TouchableOpacity
                             style={styles.translationContainer}
-                            onPress={() => setShowTranslation(true)}
+                            onPress={() => setShowTranslation(!showTranslation)}
                         >
                             <Text style={styles.translationText}>
                                 {showTranslation ? currentWord.trans : '点击查看释义'}
                             </Text>
                         </TouchableOpacity>
+
+                        {/* 发音按钮 */}
+                        <View style={styles.audioContainer}>
+                            <TouchableOpacity
+                                onPress={() => playSound(currentWord.amerPronoun)}
+                                style={styles.audioButton}
+                            >
+                                <Icon name="volume-up" size={24} color="#fff" />
+                                <Text style={styles.audioText}>美式</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => playSound(currentWord.britishPronoun)}
+                                style={styles.audioButton}
+                            >
+                                <Icon name="volume-up" size={24} color="#fff" />
+                                <Text style={styles.audioText}>英式</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* 导航按钮 */}
                         <View style={styles.navigationContainer}>
                             <TouchableOpacity
                                 onPress={goToPreviousWord}
                                 disabled={currentIndex === 0}
-                                style={[
-                                    styles.navButton,
-                                    currentIndex === 0 && styles.disabledButton,
-                                ]}
+                                style={[styles.navButton, currentIndex === 0 && styles.disabledButton]}
                             >
                                 <Text style={styles.navButtonText}>上一个</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={goToNextWord}
                                 disabled={currentIndex === words.length - 1}
-                                style={[
-                                    styles.navButton,
-                                    currentIndex === words.length - 1 && styles.disabledButton,
-                                ]}
+                                style={[styles.navButton, currentIndex === words.length - 1 && styles.disabledButton]}
                             >
                                 <Text style={styles.navButtonText}>下一个</Text>
                             </TouchableOpacity>
@@ -116,18 +150,6 @@ const ChapterDetailComponent = ({ route, navigation }) => {
                     <Text style={styles.noDataText}>没有更多单词了！</Text>
                 )}
             </View>
-
-            {/* 单词列表 */}
-            <FlatList
-                data={words}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.chapterCard}>
-                        <Text style={styles.chapterTitle}>{item.word}</Text>
-                    </TouchableOpacity>
-                )}
-                contentContainerStyle={styles.chapterList}
-            />
         </View>
     );
 };
@@ -142,19 +164,19 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center', // 主轴方向居中
+        justifyContent: 'center',
         backgroundColor: '#2b4eff',
         paddingHorizontal: 16,
         paddingVertical: 12,
     },
     backButton: {
-        position: 'absolute', // 绝对定位
-        left: 16, // 距离左侧一定距离
+        position: 'absolute',
+        left: 16,
     },
     headerTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#ffffff',
+        color: '#fff',
         textAlign: 'center',
     },
     content: {
@@ -166,7 +188,6 @@ const styles = StyleSheet.create({
     loadingText: {
         fontSize: 18,
         color: '#888',
-        textAlign: 'center',
     },
     wordText: {
         fontSize: 36,
@@ -186,18 +207,37 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: '#666',
     },
+    audioContainer: {
+        flexDirection: 'row',
+        marginBottom: 20,
+        justifyContent: 'space-between',
+        width: '60%',
+    },
+    audioButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#007BFF',
+        padding: 10,
+        borderRadius: 8,
+        justifyContent: 'center',
+        width: '48%',
+    },
+    audioText: {
+        color: '#fff',
+        marginLeft: 5,
+    },
     navigationContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
     },
     navButton: {
-        flex: 1,
         padding: 15,
         borderRadius: 8,
         backgroundColor: '#4caf50',
         justifyContent: 'center',
         alignItems: 'center',
+        flex: 1,
         marginHorizontal: 5,
     },
     disabledButton: {
@@ -210,21 +250,5 @@ const styles = StyleSheet.create({
     noDataText: {
         fontSize: 18,
         color: '#333',
-    },
-    chapterList: {
-        padding: 16,
-    },
-    chapterCard: {
-        backgroundColor: '#4caf50',
-        marginVertical: 8,
-        borderRadius: 12,
-        padding: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    chapterTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#fff',
     },
 });
