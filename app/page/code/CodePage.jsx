@@ -136,15 +136,15 @@ const CodePage = () => {
         />
     );
 };
-
 const styles = StyleSheet.create({
     listContainer: {
         padding: 16,
+        backgroundColor: '#ffffff', // 设置背景为白色
     },
     itemContainer: {
         marginBottom: 16,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 8,
+        backgroundColor: '#eef2ff', // 设置卡片的背景色为浅蓝
+        borderRadius: 12, // 增加圆角
         padding: 16,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -157,9 +157,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     titleText: {
-        fontSize: 18,
+        fontSize: 20, // 增加字体大小
         fontWeight: 'bold',
         marginLeft: 10,
+        color: '#000000', // 设置字体颜色为深蓝
     },
     subItemsContainer: {
         marginTop: 10,
@@ -167,11 +168,22 @@ const styles = StyleSheet.create({
     },
     subItemContainer: {
         marginVertical: 5,
+        backgroundColor: '#ffffff', // 子项目背景为白色
+        padding: 8,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#dce0ff', // 子项目边框颜色为浅蓝
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
     },
     subItemText: {
         fontSize: 16,
-        color: '#555',
+        color: '#333333', // 深灰色文字
     },
 });
+
 
 export default CodePage;
