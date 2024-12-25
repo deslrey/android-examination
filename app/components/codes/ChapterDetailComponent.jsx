@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome6'; // 引入图标组件
 import axios from 'axios';
 
 const PrefixApi = 'http://192.168.31.10:808/deslre';
@@ -8,7 +9,7 @@ const url = {
     getPageData: '/codes/getPageData',
 };
 
-const BrushCodeComponent = ({ route }) => {
+const ChapterDetailComponent = ({ route, navigation }) => {
     const { id, chapterNumber, itemsPerChapter } = route.params;
 
     const [words, setWords] = useState([]); // 单词列表
@@ -65,62 +66,107 @@ const BrushCodeComponent = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            {loading ? (
-                <Text style={styles.loadingText}>加载中...</Text>
-            ) : currentWord ? (
-                <>
-                    <Text style={styles.wordText}>{currentWord.word}</Text>
-                    <TouchableOpacity
-                        style={styles.translationContainer}
-                        onPress={() => setShowTranslation(true)}
-                    >
-                        <Text style={styles.translationText}>
-                            {showTranslation ? currentWord.trans : '点击查看释义'}
-                        </Text>
+            {/* 顶部导航 */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Icon name="arrow-left" size={20} color="#fff" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>第 {chapterNumber} 章单词刷题</Text>
+            </View>
+
+            {/* 内容区域 */}
+            <View style={styles.content}>
+                {loading ? (
+                    <Text style={styles.loadingText}>加载中...</Text>
+                ) : currentWord ? (
+                    <>
+                        <Text style={styles.wordText}>{currentWord.word}</Text>
+                        <TouchableOpacity
+                            style={styles.translationContainer}
+                            onPress={() => setShowTranslation(true)}
+                        >
+                            <Text style={styles.translationText}>
+                                {showTranslation ? currentWord.trans : '点击查看释义'}
+                            </Text>
+                        </TouchableOpacity>
+                        <View style={styles.navigationContainer}>
+                            <TouchableOpacity
+                                onPress={goToPreviousWord}
+                                disabled={currentIndex === 0}
+                                style={[
+                                    styles.navButton,
+                                    currentIndex === 0 && styles.disabledButton,
+                                ]}
+                            >
+                                <Text style={styles.navButtonText}>上一个</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={goToNextWord}
+                                disabled={currentIndex === words.length - 1}
+                                style={[
+                                    styles.navButton,
+                                    currentIndex === words.length - 1 && styles.disabledButton,
+                                ]}
+                            >
+                                <Text style={styles.navButtonText}>下一个</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </>
+                ) : (
+                    <Text style={styles.noDataText}>没有更多单词了！</Text>
+                )}
+            </View>
+
+            {/* 单词列表 */}
+            <FlatList
+                data={words}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                    <TouchableOpacity style={styles.chapterCard}>
+                        <Text style={styles.chapterTitle}>{item.word}</Text>
                     </TouchableOpacity>
-                    <View style={styles.navigationContainer}>
-                        <TouchableOpacity
-                            onPress={goToPreviousWord}
-                            disabled={currentIndex === 0}
-                            style={[
-                                styles.navButton,
-                                currentIndex === 0 && styles.disabledButton,
-                            ]}
-                        >
-                            <Text style={styles.navButtonText}>上一个</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={goToNextWord}
-                            disabled={currentIndex === words.length - 1}
-                            style={[
-                                styles.navButton,
-                                currentIndex === words.length - 1 && styles.disabledButton,
-                            ]}
-                        >
-                            <Text style={styles.navButtonText}>下一个</Text>
-                        </TouchableOpacity>
-                    </View>
-                </>
-            ) : (
-                <Text style={styles.noDataText}>没有更多单词了！</Text>
-            )}
+                )}
+                contentContainerStyle={styles.chapterList}
+            />
         </View>
     );
 };
 
-export default BrushCodeComponent;
+export default ChapterDetailComponent;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        backgroundColor: '#ffffff',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', // 主轴方向居中
+        backgroundColor: '#2b4eff',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+    },
+    backButton: {
+        position: 'absolute', // 绝对定位
+        left: 16, // 距离左侧一定距离
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#ffffff',
+        textAlign: 'center',
+    },
+    content: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f9f9f9',
+        padding: 20,
     },
     loadingText: {
         fontSize: 18,
         color: '#888',
+        textAlign: 'center',
     },
     wordText: {
         fontSize: 36,
@@ -146,12 +192,12 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     navButton: {
+        flex: 1,
         padding: 15,
         borderRadius: 8,
-        backgroundColor: '#007BFF',
+        backgroundColor: '#4caf50',
         justifyContent: 'center',
         alignItems: 'center',
-        flex: 1,
         marginHorizontal: 5,
     },
     disabledButton: {
@@ -164,5 +210,21 @@ const styles = StyleSheet.create({
     noDataText: {
         fontSize: 18,
         color: '#333',
+    },
+    chapterList: {
+        padding: 16,
+    },
+    chapterCard: {
+        backgroundColor: '#4caf50',
+        marginVertical: 8,
+        borderRadius: 12,
+        padding: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    chapterTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#fff',
     },
 });
