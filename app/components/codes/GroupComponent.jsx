@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome6'; // 引入图标组件
 
 const GroupComponent = ({ route, navigation }) => {
     const { id, total, title } = route.params;
@@ -10,7 +11,7 @@ const GroupComponent = ({ route, navigation }) => {
     const handleChapterPress = (chapterNumber) => {
         const start = (chapterNumber - 1) * itemsPerChapter + 1;
         const end = Math.min(chapterNumber * itemsPerChapter, total);
-        navigation.navigate('ChapterDetails', {
+        navigation.navigate('ChapterDetail', {
             id,
             chapterNumber,
             range: `${start} - ${end}`,
@@ -29,9 +30,15 @@ const GroupComponent = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            {/* 显示章节信息 */}
-            <Text style={styles.header}>{title} - 总共 {chapters} 章</Text>
-            {/* 显示章节卡片，2列布局 */}
+            {/* 顶部导航 */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Icon name="arrow-left" size={20} color="#fff" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>{title} - 总共 {chapters} 章</Text>
+            </View>
+
+            {/* 章节列表 */}
             <FlatList
                 data={Array.from({ length: chapters }, (_, index) => index + 1)}
                 keyExtractor={(item) => item.toString()}
@@ -49,19 +56,28 @@ export default GroupComponent;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
-        paddingHorizontal: 16,
-        paddingTop: 24,
+        backgroundColor: '#ffffff',
     },
     header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', // 主轴方向居中
+        backgroundColor: '#2b4eff',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+    },
+    backButton: {
+        position: 'absolute', // 绝对定位
+        left: 16, // 距离左侧一定距离
+    },
+    headerTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 16,
+        color: '#ffffff',
         textAlign: 'center',
     },
     chapterList: {
-        paddingBottom: 20,
+        padding: 16,
     },
     row: {
         justifyContent: 'space-between', // 卡片左右对齐
@@ -80,11 +96,6 @@ const styles = StyleSheet.create({
     chapterTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 8,
-    },
-    chapterSubtitle: {
-        fontSize: 14,
         color: '#fff',
     },
 });
