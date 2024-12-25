@@ -22,7 +22,7 @@ import EmailComponent from './app/components/profile/EmailComponent';
 import GenderComponent from './app/components/profile/GenderComponent';
 import NameComponent from './app/components/profile/NameComponent';
 import PhoneComponent from './app/components/profile/PhoneComponent';
-import BrushCodeComponent from './app/components/codes/BrushCodeComponent';
+import ChapterDetailComponent from './app/components/codes/ChapterDetailComponent';
 import GroupComponent from './app/components/codes/GroupComponent';
 
 const Stack = createStackNavigator(); // 创建 Stack Navigator
@@ -120,7 +120,7 @@ const App = () => {
           <Stack.Screen name="updateGender" component={GenderComponent} options={{ headerShown: false }} />
           <Stack.Screen name="updateName" component={NameComponent} options={{ headerShown: false }} />
           <Stack.Screen name="updatePhone" component={PhoneComponent} options={{ headerShown: false }} />
-          <Stack.Screen name="BrushCode" component={BrushCodeComponent} options={{ headerShown: false }} />
+          <Stack.Screen name="ChapterDetail" component={ChapterDetailComponent} options={{ headerShown: false }} />
           <Stack.Screen name="Group" component={GroupComponent} options={{ headerShown: false }} />
 
         </Stack.Navigator>
