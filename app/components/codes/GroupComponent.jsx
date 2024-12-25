@@ -14,7 +14,7 @@ const GroupComponent = ({ route, navigation }) => {
         navigation.navigate('ChapterDetail', {
             id,
             chapterNumber,
-            range: `${start} - ${end}`,
+            itemsPerChapter
         });
     };
 
