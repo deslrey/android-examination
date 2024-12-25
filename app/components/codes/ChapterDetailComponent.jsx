@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome6'; // 引入图标组件
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import Sound from 'react-native-sound'; // 引入 react-native-sound
+import Sound from 'react-native-sound';
 
 const PrefixApi = 'http://192.168.31.10:808/deslre';
 
@@ -13,11 +14,21 @@ const url = {
 const ChapterDetailComponent = ({ route, navigation }) => {
     const { id, chapterNumber, itemsPerChapter } = route.params;
 
-    const [words, setWords] = useState([]); // 单词列表
-    const [currentIndex, setCurrentIndex] = useState(0); // 当前单词索引
-    const [showTranslation, setShowTranslation] = useState(false); // 是否显示翻译
-    const [loading, setLoading] = useState(false); // 加载状态
-    const [sound, setSound] = useState(); // 音频播放
+    const [words, setWords] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [showTranslation, setShowTranslation] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    // 独立的状态管理
+    const [amerPlaying, setAmerPlaying] = useState(false);
+    const [britishPlaying, setBritishPlaying] = useState(false);
+    const [amerVolumeLevel, setAmerVolumeLevel] = useState(0);
+    const [britishVolumeLevel, setBritishVolumeLevel] = useState(0);
+
+    const [amerSound, setAmerSound] = useState(null);
+    const [britishSound, setBritishSound] = useState(null);
+
+    const volumeIcons = ['volume-low-sharp', 'volume-medium-sharp', 'volume-high-sharp'];
 
     // 获取当前章节的单词数据
     const getPageData = async () => {
@@ -31,7 +42,7 @@ const ChapterDetailComponent = ({ route, navigation }) => {
             const result = response.data;
 
             if (result.code === 200) {
-                setWords(result.data); // 设置单词列表
+                setWords(result.data);
             } else {
                 console.error('Error fetching data:', result.message);
             }
@@ -63,27 +74,50 @@ const ChapterDetailComponent = ({ route, navigation }) => {
         }
     };
 
-    // 播放音频
-    const playSound = (url) => {
-        const sound = new Sound(url, null, (error) => {
+
+
+    const playSound = (url, isAmerican) => {
+        if ((isAmerican && amerPlaying) || (!isAmerican && britishPlaying)) return;
+
+        const setPlaying = isAmerican ? setAmerPlaying : setBritishPlaying;
+        const setVolumeLevel = isAmerican ? setAmerVolumeLevel : setBritishVolumeLevel;
+        const setSound = isAmerican ? setAmerSound : setBritishSound;
+
+        setPlaying(true);
+
+        const soundInstance = new Sound(url, null, (error) => {
             if (error) {
                 console.log('Failed to load sound', error);
+                setPlaying(false);
                 return;
             }
-            sound.play(() => {
-                console.log('Sound finished playing');
+
+            soundInstance.play((success) => {
+                if (success) {
+                    console.log('Sound finished playing');
+                } else {
+                    console.log('Playback failed');
+                }
+                setPlaying(false);
+                setAmerVolumeLevel(0);
+                setBritishVolumeLevel(0);
+                clearInterval(volumeInterval);
             });
         });
 
-        setSound(sound);
+        setSound(soundInstance);
+
+        const volumeInterval = setInterval(() => {
+            setVolumeLevel((prevLevel) => (prevLevel + 1) % 3);
+        }, 200);
+
+        soundInstance.setVolume(1.0);
     };
 
-    // 当前单词数据
     const currentWord = words[currentIndex];
 
     return (
         <View style={styles.container}>
-            {/* 顶部导航 */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Icon name="arrow-left" size={20} color="#fff" />
@@ -91,44 +125,48 @@ const ChapterDetailComponent = ({ route, navigation }) => {
                 <Text style={styles.headerTitle}>第 {chapterNumber} 章单词刷题</Text>
             </View>
 
-            {/* 内容区域 */}
             <View style={styles.content}>
                 {loading ? (
                     <Text style={styles.loadingText}>加载中...</Text>
                 ) : currentWord ? (
                     <>
-                        {/* 单词 */}
                         <Text style={styles.wordText}>{currentWord.word}</Text>
-
-                        {/* 释义 */}
                         <TouchableOpacity
-                            style={styles.translationContainer}
+                            style={styles.translationCard}
                             onPress={() => setShowTranslation(!showTranslation)}
                         >
-                            <Text style={styles.translationText}>
-                                {showTranslation ? currentWord.trans : '点击查看释义'}
-                            </Text>
+                            <View style={styles.translationShadow}>
+                                <Text style={styles.translationText}>
+                                    {showTranslation ? currentWord.trans : '点击查看释义'}
+                                </Text>
+                            </View>
                         </TouchableOpacity>
 
-                        {/* 喇叭样式的发音按钮 */}
                         <View style={styles.audioContainer}>
                             <TouchableOpacity
-                                onPress={() => playSound(currentWord.amerPronoun)}
+                                onPress={() => playSound(currentWord.amerPronoun, true)}
                                 style={styles.speakerButton}
                             >
-                                <Icon name="volume-high" size={36} color="#4caf50" />
+                                <Ionicons
+                                    name={volumeIcons[amerVolumeLevel]}
+                                    size={36}
+                                    color="#007BFF"
+                                />
                                 <Text style={styles.speakerText}>美式</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={() => playSound(currentWord.britishPronoun)}
+                                onPress={() => playSound(currentWord.britishPronoun, false)}
                                 style={styles.speakerButton}
                             >
-                                <Icon name="volume-high" size={36} color="#4caf50" />
+                                <Ionicons
+                                    name={volumeIcons[britishVolumeLevel]}
+                                    size={36}
+                                    color="#007BFF"
+                                />
                                 <Text style={styles.speakerText}>英式</Text>
                             </TouchableOpacity>
                         </View>
 
-                        {/* 导航按钮 */}
                         <View style={styles.navigationContainer}>
                             <TouchableOpacity
                                 onPress={goToPreviousWord}
@@ -159,13 +197,13 @@ export default ChapterDetailComponent;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#f9f9f9',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#2b4eff',
+        backgroundColor: '#007BFF',
         paddingHorizontal: 16,
         paddingVertical: 12,
     },
@@ -174,10 +212,9 @@ const styles = StyleSheet.create({
         left: 16,
     },
     headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 20,
+        fontWeight: '600',
         color: '#fff',
-        textAlign: 'center',
     },
     content: {
         flex: 1,
@@ -187,40 +224,52 @@ const styles = StyleSheet.create({
     },
     loadingText: {
         fontSize: 18,
-        color: '#888',
+        color: '#555',
     },
     wordText: {
-        fontSize: 36,
+        fontSize: 40,
         fontWeight: 'bold',
         marginBottom: 20,
-        color: '#333',
+        color: '#222',
     },
-    translationContainer: {
-        padding: 20,
-        borderRadius: 8,
-        backgroundColor: '#ddd',
+    translationCard: {
+        padding: 15,
+        borderRadius: 12,
+        backgroundColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    translationShadow: {
+        padding: 10,
     },
     translationText: {
-        fontSize: 24,
-        color: '#666',
+        fontSize: 20,
+        color: '#444',
     },
     audioContainer: {
         flexDirection: 'row',
         marginBottom: 20,
-        justifyContent: 'space-between',
-        width: '60%',
+        justifyContent: 'space-around',
+        width: '80%',
     },
     speakerButton: {
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 10,
+        backgroundColor: '#E8F0FE',
+        borderRadius: 10,
+        width: '40%',
     },
     speakerText: {
         marginTop: 8,
         fontSize: 16,
-        color: '#4caf50',
+        color: '#007BFF',
         textAlign: 'center',
     },
     navigationContainer: {
@@ -230,7 +279,7 @@ const styles = StyleSheet.create({
     },
     navButton: {
         padding: 15,
-        borderRadius: 8,
+        borderRadius: 10,
         backgroundColor: '#4caf50',
         justifyContent: 'center',
         alignItems: 'center',
