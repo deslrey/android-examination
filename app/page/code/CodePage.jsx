@@ -11,7 +11,7 @@ const url = {
     getCategory: '/books/getCategory',
 };
 
-const CodePage = () => {
+const CodePage = ({ navigation }) => {
     const [data, setData] = useState([]);
     const [expanded, setExpanded] = useState({});
 
@@ -49,7 +49,6 @@ const CodePage = () => {
             Csharp: <Mater name="language-csharp" size={30} />,
             SQL: <Fontisto name="mysql" size={30} />,
             AI: <FontAwesome5 name="airbnb" size={30} />,
-            // Arduino: <Mater name="arduino" size={30} />,
         };
 
         return rawData.reduce((acc, item) => {
@@ -60,7 +59,7 @@ const CodePage = () => {
             if (existingCategory) {
                 existingCategory.subItems.push({
                     id: `${item.id}`,
-                    title: `${item.bookName} `, // 显示单词数量
+                    title: `${item.bookName} `,
                     wordSum: item.wordSum,
                 });
             } else {
@@ -71,7 +70,7 @@ const CodePage = () => {
                     subItems: [
                         {
                             id: `${item.id}`,
-                            title: `${item.bookName} `, // 显示单词数量
+                            title: `${item.bookName} `,
                             wordSum: item.wordSum,
                         },
                     ],
@@ -80,7 +79,6 @@ const CodePage = () => {
             return acc;
         }, []);
     };
-
 
     // 切换展开状态
     const toggleExpand = (id) => {
@@ -107,7 +105,6 @@ const CodePage = () => {
         ));
     };
 
-
     // 渲染每个父类
     const renderItem = ({ item }) => {
         const isExpanded = expanded[item.id];
@@ -128,23 +125,55 @@ const CodePage = () => {
     }, []);
 
     return (
-        <FlatList
-            data={data}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            contentContainerStyle={styles.listContainer}
-        />
+        <View style={styles.container}>
+            {/* 顶部导航 */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Icon name="arrow-left" size={20} color="#fff" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>代码练习</Text>
+            </View>
+            {/* 内容区域 */}
+            <FlatList
+                data={data}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                contentContainerStyle={styles.listContainer}
+            />
+        </View>
     );
 };
+
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', // 主轴方向居中
+        backgroundColor: '#2b4eff',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+    },
+    backButton: {
+        position: 'absolute', // 绝对定位
+        left: 16, // 距离左侧一定距离
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#ffffff',
+        textAlign: 'center',
+    },
     listContainer: {
         padding: 16,
-        backgroundColor: '#ffffff', // 设置背景为白色
     },
     itemContainer: {
         marginBottom: 16,
-        backgroundColor: '#eef2ff', // 设置卡片的背景色为浅蓝
-        borderRadius: 12, // 增加圆角
+        backgroundColor: '#eef2ff',
+        borderRadius: 12,
         padding: 16,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -157,10 +186,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     titleText: {
-        fontSize: 20, // 增加字体大小
+        fontSize: 20,
         fontWeight: 'bold',
         marginLeft: 10,
-        color: '#000000', // 设置字体颜色为深蓝
+        color: '#000000',
     },
     subItemsContainer: {
         marginTop: 10,
@@ -168,11 +197,11 @@ const styles = StyleSheet.create({
     },
     subItemContainer: {
         marginVertical: 5,
-        backgroundColor: '#ffffff', // 子项目背景为白色
+        backgroundColor: '#ffffff',
         padding: 8,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#dce0ff', // 子项目边框颜色为浅蓝
+        borderColor: '#dce0ff',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
@@ -181,9 +210,8 @@ const styles = StyleSheet.create({
     },
     subItemText: {
         fontSize: 16,
-        color: '#333333', // 深灰色文字
+        color: '#333333',
     },
 });
-
 
 export default CodePage;
