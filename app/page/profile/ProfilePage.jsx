@@ -3,6 +3,7 @@ import { View, Image, StyleSheet, Dimensions, TouchableOpacity, Alert } from 're
 import { Text, Button } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import ImagePicker from 'react-native-image-crop-picker';  // 导入image crop picker
+import Icon from 'react-native-vector-icons/FontAwesome6'; // 引入图标组件
 
 const { width } = Dimensions.get('window');  // 获取屏幕宽度
 
@@ -85,6 +86,14 @@ const ProfilePage = () => {
 
     return (
         <View style={styles.container}>
+            {/* 顶部导航栏 */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Icon name="arrow-left" size={20} color="#fff" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>个人资料</Text>
+            </View>
+
             {/* 用户头像 */}
             <TouchableOpacity onPress={avatarClick}>
                 <Image source={avatarUri} style={styles.avatar} />
@@ -134,8 +143,26 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        padding: 20,
+        // padding: 20,
         backgroundColor: '#f0f0f0',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', // 主轴方向居中
+        backgroundColor: '#2b4eff',
+        width: '100%',
+        paddingVertical: 12,
+    },
+    backButton: {
+        position: 'absolute', // 绝对定位
+        left: 16, // 距离左侧一定距离
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#ffffff',
+        textAlign: 'center',
     },
     avatar: {
         width: width * 0.3,
