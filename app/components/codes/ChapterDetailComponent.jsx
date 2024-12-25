@@ -110,21 +110,21 @@ const ChapterDetailComponent = ({ route, navigation }) => {
                             </Text>
                         </TouchableOpacity>
 
-                        {/* 发音按钮 */}
+                        {/* 喇叭样式的发音按钮 */}
                         <View style={styles.audioContainer}>
                             <TouchableOpacity
                                 onPress={() => playSound(currentWord.amerPronoun)}
-                                style={styles.audioButton}
+                                style={styles.speakerButton}
                             >
-                                <Icon name="volume-up" size={24} color="#fff" />
-                                <Text style={styles.audioText}>美式</Text>
+                                <Icon name="volume-high" size={36} color="#4caf50" />
+                                <Text style={styles.speakerText}>美式</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => playSound(currentWord.britishPronoun)}
-                                style={styles.audioButton}
+                                style={styles.speakerButton}
                             >
-                                <Icon name="volume-up" size={24} color="#fff" />
-                                <Text style={styles.audioText}>英式</Text>
+                                <Icon name="volume-high" size={36} color="#4caf50" />
+                                <Text style={styles.speakerText}>英式</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -213,18 +213,15 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '60%',
     },
-    audioButton: {
-        flexDirection: 'row',
+    speakerButton: {
         alignItems: 'center',
-        backgroundColor: '#007BFF',
-        padding: 10,
-        borderRadius: 8,
         justifyContent: 'center',
-        width: '48%',
     },
-    audioText: {
-        color: '#fff',
-        marginLeft: 5,
+    speakerText: {
+        marginTop: 8,
+        fontSize: 16,
+        color: '#4caf50',
+        textAlign: 'center',
     },
     navigationContainer: {
         flexDirection: 'row',
