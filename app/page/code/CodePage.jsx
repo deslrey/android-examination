@@ -87,7 +87,7 @@ const CodePage = ({ navigation }) => {
 
     // 子类点击事件
     const handleSubItemPress = (subItem) => {
-        navigation.navigate('Group', { id: subItem.id, total: subItem.wordSum });
+        navigation.navigate('Group', { id: subItem.id, total: subItem.wordSum, title: subItem.title });
     };
 
     // 渲染子类
