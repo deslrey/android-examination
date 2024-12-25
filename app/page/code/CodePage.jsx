@@ -25,7 +25,6 @@ const CodePage = () => {
             );
 
             const result = response.data;
-            console.log('result =====> ', result);
 
             if (result.code === 200) {
                 const transformedData = transformData(result.data);
@@ -61,7 +60,8 @@ const CodePage = () => {
             if (existingCategory) {
                 existingCategory.subItems.push({
                     id: `${item.id}`,
-                    title: item.bookName,
+                    title: `${item.bookName} `, // 显示单词数量
+                    wordSum: item.wordSum,
                 });
             } else {
                 acc.push({
@@ -71,7 +71,8 @@ const CodePage = () => {
                     subItems: [
                         {
                             id: `${item.id}`,
-                            title: item.bookName,
+                            title: `${item.bookName} `, // 显示单词数量
+                            wordSum: item.wordSum,
                         },
                     ],
                 });
@@ -80,6 +81,7 @@ const CodePage = () => {
         }, []);
     };
 
+
     // 切换展开状态
     const toggleExpand = (id) => {
         setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -87,7 +89,7 @@ const CodePage = () => {
 
     // 子类点击事件
     const handleSubItemPress = (subItem) => {
-        console.log(`Clicked on ${subItem.title}`);
+        console.log(`Clicked on ${subItem.id}`);
     };
 
     // 渲染子类
@@ -98,10 +100,13 @@ const CodePage = () => {
                 style={styles.subItemContainer}
                 onPress={() => handleSubItemPress(subItem)}
             >
-                <Text style={styles.subItemText}>{subItem.title}</Text>
+                <Text style={styles.subItemText}>
+                    {subItem.title} - {subItem.wordSum} 词
+                </Text>
             </TouchableOpacity>
         ));
     };
+
 
     // 渲染每个父类
     const renderItem = ({ item }) => {
