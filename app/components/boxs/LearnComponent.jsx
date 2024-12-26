@@ -107,14 +107,19 @@ const LearnComponent = ({ navigation }) => {
             <View style={styles.audioContainer}>
                 {/* 如果amer不为null，则点击"美式"文本来播放音标 */}
                 {currentWord?.amer && (
-                    <TouchableOpacity onPress={() => playSound(currentWord?.amer)}>
+                    <TouchableOpacity onPress={() => playSound(currentWord?.amerPronoun)}>
                         <Text style={styles.pronounceText}>美式音标</Text>
                     </TouchableOpacity>
                 )}
                 {/* 如果british不为null，则点击"英式"文本来播放音标 */}
                 {currentWord?.british && (
-                    <TouchableOpacity onPress={() => playSound(currentWord?.british)}>
-                        <Text style={styles.pronounceText}>英式音标</Text>
+                    <TouchableOpacity onPress={() => playSound(currentWord?.britishPronoun)}>
+                        <Text style={styles.pronounceText}>英式音标: {currentWord.british}</Text>
+                    </TouchableOpacity>
+                )}
+                {currentWord?.pronounce && (
+                    <TouchableOpacity onPress={() => playSound(currentWord?.pronounce)}>
+                        <Text style={styles.pronounceText}><Icon name='volume-up' size={20} /></Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -257,6 +262,8 @@ const styles = StyleSheet.create({
         width: '80%',
         marginBottom: 20,
         alignSelf: 'center', // 居中对齐
+        marginTop: 20,
+
     },
     button: {
         backgroundColor: '#2b4eff',
