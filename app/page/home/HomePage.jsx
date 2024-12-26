@@ -1,17 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ImageBackground, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BoxComponent from '../../components/boxs/BoxComponent';
 import SignInButton from '../../components/sign/SignInButton';
 import useHomePageLogic from '../../hooks/useHomePageLogic';
 import Icon from 'react-native-vector-icons/FontAwesome6';  // 导入图标库
+import UserStorageService from '../../db/UserStorageService'; // 导入本地存储服务
 
-const image = require('../../static/images/lbl.png');
-const userAvatar = require('../../static/avatars/avatar.jpg'); // 用户头像图片路径
+const image = require('../../static/images/lbl.png'); // 背景图片
 
 const HomePage = () => {
     const navigation = useNavigation();
     const { hasSignedIn, handleSignIn, toLearn, toReview, toCode, toCubesStack, toLeaning } = useHomePageLogic(navigation);
+
+    const [avatarUri, setAvatarUri] = useState(require('../../static/avatars/avatar.jpg')); // 默认头像
+
+    // 在组件加载时获取用户头像
+    useEffect(() => {
+        const loadUserAvatar = async () => {
+            try {
+                const storedAvatar = await UserStorageService.getUserAvatar(); // 从本地存储获取头像
+                if (storedAvatar) {
+                    // 如果头像是 Base64 格式
+                    if (storedAvatar.startsWith('data:image')) {
+                        setAvatarUri({ uri: storedAvatar });
+                    } else {
+                        // 如果头像是文件路径
+                        setAvatarUri({ uri: storedAvatar });
+                    }
+                }
+            } catch (error) {
+                console.error('加载头像时出错:', error);
+            }
+        };
+
+        loadUserAvatar();
+    }, []);  // 组件加载时只执行一次
 
     // 跳转到个人中心
     const goToProfile = () => {
@@ -23,7 +47,7 @@ const HomePage = () => {
             <ImageBackground source={image} style={styles.image}>
                 {/* 用户头像 */}
                 <TouchableOpacity style={styles.avatarContainer} onPress={goToProfile}>
-                    <Image source={userAvatar} style={styles.avatar} />
+                    <Image source={avatarUri} style={styles.avatar} />
                 </TouchableOpacity>
 
                 <SignInButton hasSignedIn={hasSignedIn} onSignIn={handleSignIn} />
