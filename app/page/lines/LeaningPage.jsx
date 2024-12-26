@@ -125,7 +125,7 @@ export default function LearningPage({ navigation }) {
         StorageService.clearAllBooks()
         // 保存书籍信息
         StorageService.saveBook(book)
-        Alert.alert('保存成功', `书籍 "${book.title}" 和相关单词已成功保存！`);
+        Alert.alert('保存成功', `书籍 "${book.bookName}" 和相关单词已成功保存！`);
     };
 
     // 从后端获取数据
