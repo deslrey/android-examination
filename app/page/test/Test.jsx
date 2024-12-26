@@ -1,126 +1,74 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert, ScrollView } from 'react-native';
-import WordStorageService from '../../db/WordStorageService';
+import React, { useState } from 'react';
+import { View, Text, Button, Alert } from 'react-native';
+import UserStorageService from '../../db/UserStorageService';
+import ImagePicker from 'react-native-image-crop-picker';  // 导入image crop picker
 
 const Test = () => {
-    const [words, setWords] = useState([]); // 用于存储获取到的单词列表
-    const [loading, setLoading] = useState(true);
+    const [avatarUri, setAvatarUri] = useState(require('../../static/avatars/avatar.jpg')); // 初始头像
 
-    // 获取保存的单词列表
-    const loadWords = async () => {
-        setLoading(true);
-        const savedWords = await WordStorageService.getWords();
-        console.log('words ========> ', words);
-
-        setWords(savedWords);
-        setLoading(false);
-    };
-
-    // 增：保存新单词
-    const handleSaveWord = () => {
-        const newWord = {
-            id: new Date().getTime().toString(), // 使用当前时间戳作为单词ID
-            bookId: 1,
-            word: `新单词 - ${new Date().toLocaleTimeString()}`,
-            notation: null,
-            trans: '新的单词翻译',
-            pronounce: null,
-            amerPronoun: 'https://dict.youdao.com/dictvoice?audio=newword&type=0',
-            britishPronoun: 'https://dict.youdao.com/dictvoice?audio=newword&type=1',
-            createTime: new Date().toISOString(),
-            updateTime: new Date().toISOString(),
+    // 保存用户信息和头像
+    const testSaveUserInfo = async () => {
+        const testUser = {
+            name: 'Deslre',
+            gender: '男',
+            accountId: '1234567890',
+            phone: '13812345678',
+            email: 'zhangsan@example.com',
         };
 
-        WordStorageService.saveWord(newWord);
-        Alert.alert('提示', '新单词已保存');
-        loadWords(); // 更新单词列表
+        try {
+            // 保存用户信息
+            await UserStorageService.saveUserInfo(testUser);
+
+            // 选择头像并保存
+            ImagePicker.openPicker({
+                cropping: true,
+                width: 300,
+                height: 300,
+                compressImageMaxWidth: 300,
+                compressImageMaxHeight: 300,
+                compressImageQuality: 0.7,
+            }).then(image => {
+                const avatarBase64 = `data:image/jpeg;base64,${image.data}`;
+                // 保存头像的 base64 字符串
+                UserStorageService.saveUserAvatar(avatarBase64);
+                Alert.alert('成功', '用户信息和头像已保存');
+            }).catch(error => {
+                console.log('图片选择错误: ', error);
+            });
+        } catch (error) {
+            Alert.alert('错误', '保存用户信息时发生错误');
+        }
     };
 
-    // 删：删除某个单词
-    const handleDeleteWord = (wordId) => {
-        WordStorageService.deleteWord(wordId);
-        Alert.alert('提示', '单词已删除');
-        loadWords(); // 更新单词列表
+    // 获取用户信息和头像
+    const testGetUserInfo = async () => {
+        try {
+            const userInfo = await UserStorageService.getUserInfo();
+            const avatarBase64 = await UserStorageService.getUserAvatar();
+            if (userInfo) {
+                Alert.alert('用户信息', `姓名: ${userInfo.name}\n性别: ${userInfo.gender}`);
+                if (avatarBase64) {
+                    Alert.alert('头像', '头像已成功存储（Base64格式）');
+                } else {
+                    Alert.alert('无头像', '没有保存头像');
+                }
+            } else {
+                Alert.alert('无用户信息', '没有找到保存的用户信息');
+            }
+        } catch (error) {
+            Alert.alert('错误', '获取用户信息时发生错误');
+        }
     };
-
-    // 改：更新单词信息
-    const handleUpdateWord = (wordId) => {
-        const updatedWord = {
-            trans: '更新后的翻译',
-            amerPronoun: 'https://dict.youdao.com/dictvoice?audio=updatedword&type=0',
-            britishPronoun: 'https://dict.youdao.com/dictvoice?audio=updatedword&type=1',
-        };
-
-        WordStorageService.updateWord(wordId, updatedWord);
-        Alert.alert('提示', '单词已更新');
-        loadWords(); // 更新单词列表
-    };
-
-    // 查：查看单词详情
-    const handleViewWord = (word) => {
-        Alert.alert('单词详情', `单词: ${word.word}\n翻译: ${word.trans}\n美式发音: ${word.amerPronoun}\n英式发音: ${word.britishPronoun}`);
-    };
-
-    // 清空所有单词
-    const handleClearAllWords = async () => {
-        await WordStorageService.clearAllWords();
-        Alert.alert('提示', '所有单词已清空');
-        loadWords(); // 更新单词列表
-    };
-
-    useEffect(() => {
-        loadWords(); // 初始化时加载单词列表
-    }, []);
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>增删改查单词操作测试</Text>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ marginBottom: 20 }}>测试 UserStorageService</Text>
 
-            <Button title="添加新单词" onPress={handleSaveWord} />
-            <Button title="清空所有单词" onPress={handleClearAllWords} />
-
-            <ScrollView style={styles.wordList}>
-                {loading ? (
-                    <Text>加载中...</Text>
-                ) : (
-                    words.map((word) => (
-                        <View key={word.id} style={styles.wordItem}>
-                            <Text>{word.word}</Text>
-                            <Text>翻译: {word.trans}</Text>
-
-                            <Button title="查看详情" onPress={() => handleViewWord(word)} />
-                            <Button title="更新单词" onPress={() => handleUpdateWord(word.id)} />
-                            <Button title="删除单词" onPress={() => handleDeleteWord(word.id)} />
-                        </View>
-                    ))
-                )}
-            </ScrollView>
+            <Button title="保存测试信息" onPress={testSaveUserInfo} />
+            <Button title="获取用户信息" onPress={testGetUserInfo} style={{ marginTop: 20 }} />
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        textAlign: 'center',
-    },
-    wordList: {
-        marginTop: 20,
-    },
-    wordItem: {
-        padding: 10,
-        marginBottom: 10,
-        backgroundColor: '#f4f4f4',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-    },
-});
 
 export default Test;
