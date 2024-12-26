@@ -30,7 +30,7 @@ export default function LearningPage() {
 
         // 转换为可用的数据结构
         return Object.entries(grouped).map(([language, tagData]) => ({
-            title: language,
+            title: mapLanguageName(language),
             topics: Object.entries(tagData).map(([tag, books]) => ({
                 id: tag,
                 title: tag,
@@ -38,6 +38,17 @@ export default function LearningPage() {
                 books,
             })),
         }));
+    };
+
+    const mapLanguageName = (language) => {
+        const languageMap = {
+            en: '英语',
+            ja: '日语',
+            de: '德语',
+            id: '印尼语',
+            kk: '哈萨克语',
+        };
+        return languageMap[language] || language;
     };
 
     const getAllWordBooks = async () => {
@@ -64,6 +75,13 @@ export default function LearningPage() {
     useEffect(() => {
         getAllWordBooks();
     }, []);
+
+    // 点击卡片事件
+    const handleCardPress = (book) => {
+        console.log('Clicked Book: ', book);
+        // 在这里可以执行相关的逻辑，比如跳转到书籍详情页
+        // 例如：navigation.navigate('BookDetails', { bookId: book.id });
+    };
 
     // 渲染内容
     if (loading) {
@@ -115,11 +133,17 @@ export default function LearningPage() {
                             {activeSubCategory ? (
                                 // 找到选中的小类
                                 category.topics.find((t) => t.id === activeSubCategory)?.books.map((book) => (
-                                    <Card key={book.id} containerStyle={styles.card}>
-                                        <Text h3>{book.bookName}</Text>
-                                        <Text style={styles.bookDetails}>包含单词数：{book.wordSum}</Text>
-                                        <Text style={styles.bookDetails}>语言分类：{book.languageCategory}</Text>
-                                        <Text style={styles.bookDetails}>标签：{book.tags}</Text>
+                                    <Card
+                                        key={book.id}
+                                        containerStyle={styles.card}
+                                    // 点击卡片触发事件
+                                    >
+                                        <TouchableOpacity onPress={() => handleCardPress(book)}>
+                                            <Text h3>{book.bookName}</Text>
+                                            <Text style={styles.bookDetails}>包含单词数：{book.wordSum}</Text>
+                                            <Text style={styles.bookDetails}>语言分类：{book.languageCategory}</Text>
+                                            <Text style={styles.bookDetails}>标签：{book.tags}</Text>
+                                        </TouchableOpacity>
                                     </Card>
                                 ))
                             ) : (
@@ -128,7 +152,7 @@ export default function LearningPage() {
                         </ScrollView>
                     </TabView.Item>
                 ))}
-            </TabView>
+            </TabView >
         </>
     );
 }
