@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { ScrollView, StyleSheet, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Tab, TabView, Text, Card } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/FontAwesome6'; // 用于返回按钮的图标
 import StorageService from '../../db/StorageService';
+import WordStorageService from '../../db/WordStorageService';
 import axios from 'axios';
 
 
 const PrefixApi = 'http://192.168.31.10:808/deslre';
 const url = {
     getAllWordBooks: '/books/getAllWordBooks',
+    getWordData: '/words/getWordData',
 };
 
 export default function LearningPage({ navigation }) {
@@ -59,7 +61,7 @@ export default function LearningPage({ navigation }) {
             const response = await axios.get(
                 PrefixApi + url.getAllWordBooks
             );
-            console.log('result ======> ', response.data);
+            // console.log('result ======> ', response.data);
             const result = groupBooksByLanguageAndTags(response.data.data);
             setCategories(result);
 
@@ -74,12 +76,42 @@ export default function LearningPage({ navigation }) {
         }
     };
 
+
+    // 获取数据并设置到 state
+    const getWordData = async (id) => {
+        try {
+            const response = await axios.post(
+                PrefixApi + url.getWordData,
+                { bookId: id },
+                { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+            );
+
+            const result = response.data;
+
+            if (result.code === 200) {
+                const data = result.data
+                // 遍历每个单词对象，保存到 AsyncStorage
+                for (const word of data) {
+                    await WordStorageService.saveWord(word);
+                }
+            } else {
+                console.error('Error fetching data:', result.message);
+            }
+        } catch (error) {
+            console.error('Request failed:', error);
+        }
+    };
+
+
     const handleCardPress = (book) => {
         // console.log('Clicked Book: ', book);
+        WordStorageService.clearAllWords()
+        getWordData(book.id)
         // 先清空当前数据信息
         StorageService.clearAllBooks()
         // 保存书籍信息
         StorageService.saveBook(book)
+        Alert.alert('保存成功', `书籍 "${book.title}" 和相关单词已成功保存！`);
     };
 
     // 从后端获取数据

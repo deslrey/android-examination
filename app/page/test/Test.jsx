@@ -1,84 +1,96 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert, ScrollView } from 'react-native';
-import StorageService from '../../db/StorageService';
-
+import WordStorageService from '../../db/WordStorageService';
 
 const Test = () => {
-    const [books, setBooks] = useState([]); // 用于存储获取到的书本列表
+    const [words, setWords] = useState([]); // 用于存储获取到的单词列表
     const [loading, setLoading] = useState(true);
 
-    // 获取保存的书本列表
-    const loadBooks = async () => {
+    // 获取保存的单词列表
+    const loadWords = async () => {
         setLoading(true);
-        const savedBooks = await StorageService.getBooks();
-        setBooks(savedBooks);
+        const savedWords = await WordStorageService.getWords();
+        console.log('words ========> ', words);
+
+        setWords(savedWords);
         setLoading(false);
     };
 
-    // 增：保存新书本
-    const handleSaveBook = () => {
-        const newBook = {
-            id: new Date().getTime().toString(), // 使用当前时间戳作为书本ID
-            bookName: `新书本 - ${new Date().toLocaleTimeString()}`,
-            wordSum: Math.floor(Math.random() * 100), // 随机生成单词数量
-            languageCategory: '英语',
-            tags: '词汇',
+    // 增：保存新单词
+    const handleSaveWord = () => {
+        const newWord = {
+            id: new Date().getTime().toString(), // 使用当前时间戳作为单词ID
+            bookId: 1,
+            word: `新单词 - ${new Date().toLocaleTimeString()}`,
+            notation: null,
+            trans: '新的单词翻译',
+            pronounce: null,
+            amerPronoun: 'https://dict.youdao.com/dictvoice?audio=newword&type=0',
+            britishPronoun: 'https://dict.youdao.com/dictvoice?audio=newword&type=1',
+            createTime: new Date().toISOString(),
+            updateTime: new Date().toISOString(),
         };
 
-        StorageService.saveBook(newBook);
-        Alert.alert('提示', '新书本已保存');
-        loadBooks(); // 更新书本列表
+        WordStorageService.saveWord(newWord);
+        Alert.alert('提示', '新单词已保存');
+        loadWords(); // 更新单词列表
     };
 
-    // 删：删除某本书
-    const handleDeleteBook = (bookId) => {
-        StorageService.deleteBook(bookId);
-        Alert.alert('提示', '书本已删除');
-        loadBooks(); // 更新书本列表
+    // 删：删除某个单词
+    const handleDeleteWord = (wordId) => {
+        WordStorageService.deleteWord(wordId);
+        Alert.alert('提示', '单词已删除');
+        loadWords(); // 更新单词列表
     };
 
-    // 改：更新书本信息
-    const handleUpdateBook = (bookId) => {
-        const updatedBook = {
-            bookName: '更新后的书名',
-            wordSum: Math.floor(Math.random() * 1000), // 随机生成新的单词数量
-            languageCategory: '法语',
-            tags: '新标签',
+    // 改：更新单词信息
+    const handleUpdateWord = (wordId) => {
+        const updatedWord = {
+            trans: '更新后的翻译',
+            amerPronoun: 'https://dict.youdao.com/dictvoice?audio=updatedword&type=0',
+            britishPronoun: 'https://dict.youdao.com/dictvoice?audio=updatedword&type=1',
         };
 
-        StorageService.updateBook(bookId, updatedBook);
-        Alert.alert('提示', '书本已更新');
-        loadBooks(); // 更新书本列表
+        WordStorageService.updateWord(wordId, updatedWord);
+        Alert.alert('提示', '单词已更新');
+        loadWords(); // 更新单词列表
     };
 
-    // 查：查看书本详情
-    const handleViewBook = (book) => {
-        Alert.alert('书本详情', `书名: ${book.bookName}\n单词数: ${book.wordSum}\n语言分类: ${book.languageCategory}\n标签: ${book.tags}`);
+    // 查：查看单词详情
+    const handleViewWord = (word) => {
+        Alert.alert('单词详情', `单词: ${word.word}\n翻译: ${word.trans}\n美式发音: ${word.amerPronoun}\n英式发音: ${word.britishPronoun}`);
+    };
+
+    // 清空所有单词
+    const handleClearAllWords = async () => {
+        await WordStorageService.clearAllWords();
+        Alert.alert('提示', '所有单词已清空');
+        loadWords(); // 更新单词列表
     };
 
     useEffect(() => {
-        loadBooks(); // 初始化时加载书本列表
+        loadWords(); // 初始化时加载单词列表
     }, []);
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>增删改查操作测试</Text>
+            <Text style={styles.header}>增删改查单词操作测试</Text>
 
-            <Button title="添加新书本" onPress={handleSaveBook} />
-            <ScrollView style={styles.bookList}>
+            <Button title="添加新单词" onPress={handleSaveWord} />
+            <Button title="清空所有单词" onPress={handleClearAllWords} />
+
+            <ScrollView style={styles.wordList}>
                 {loading ? (
                     <Text>加载中...</Text>
                 ) : (
-                    books.map((book) => (
-                        <View key={book.id} style={styles.bookItem}>
-                            <Text>{book.bookName}</Text>
-                            <Text>标签: {book.tags}</Text>
-                            <Text>语言: {book.languageCategory}</Text>
-                            <Text>单词数: {book.wordSum}</Text>
+                    words.map((word) => (
+                        <View key={word.id} style={styles.wordItem}>
+                            <Text>{word.word}</Text>
+                            <Text>翻译: {word.trans}</Text>
 
-                            <Button title="查看详情" onPress={() => handleViewBook(book)} />
-                            <Button title="更新书本" onPress={() => handleUpdateBook(book.id)} />
-                            <Button title="删除书本" onPress={() => handleDeleteBook(book.id)} />
+                            <Button title="查看详情" onPress={() => handleViewWord(word)} />
+                            <Button title="更新单词" onPress={() => handleUpdateWord(word.id)} />
+                            <Button title="删除单词" onPress={() => handleDeleteWord(word.id)} />
                         </View>
                     ))
                 )}
@@ -98,10 +110,10 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         textAlign: 'center',
     },
-    bookList: {
+    wordList: {
         marginTop: 20,
     },
-    bookItem: {
+    wordItem: {
         padding: 10,
         marginBottom: 10,
         backgroundColor: '#f4f4f4',
