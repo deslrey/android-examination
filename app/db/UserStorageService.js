@@ -114,5 +114,6 @@ export default {
     updateUserName,  // 导出更新昵称的方法
     deleteUserInfo,
     updateUserGender,
-    updateUserPhone
+    updateUserPhone,
+    updateUserEmail
 };
