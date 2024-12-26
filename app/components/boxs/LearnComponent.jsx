@@ -55,6 +55,8 @@ const LearnComponent = ({ navigation, route }) => {
                     <Icon name="arrow-left" size={20} color="#fff" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>刷单词</Text>
+                {/* 添加进度信息 */}
+                <Text style={styles.progressText}>{currentWordIndex + 1}/{words.length}</Text>
             </View>
 
             {/* 显示notation, word, trans */}
@@ -113,7 +115,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
-        // paddingHorizontal: 16,
     },
     header: {
         flexDirection: 'row',
@@ -132,6 +133,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ffffff',
         textAlign: 'center',
+        flex: 1, // 使标题居中
+    },
+    progressText: {
+        fontSize: 14,
+        color: '#fff',
+        fontWeight: 'bold',
+        position: 'absolute', // 绝对定位
+        right: 16, // 距离右侧一定距离
     },
     notation: {
         paddingTop: 20,
@@ -140,7 +149,7 @@ const styles = StyleSheet.create({
         color: '#444',
         marginBottom: 15,
         textAlign: 'center',
-        lineHeight: 40, // 调整行高，增加可读性
+        lineHeight: 40,
     },
     word: {
         textAlign: 'center',
@@ -148,33 +157,32 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 30,
-        lineHeight: 36, // 调整行高，增加可读性
+        lineHeight: 36,
     },
     audioContainer: {
-        flexDirection: 'row', // 将音频图标横向排列
+        flexDirection: 'row',
         marginBottom: 30,
-        justifyContent: 'center', // 图标居中
+        justifyContent: 'center',
     },
     iconSpacing: {
-        marginLeft: 15, // 设置图标之间的间距
+        marginLeft: 15,
     },
     definitionContainer: {
         backgroundColor: '#eee',
         padding: 20,
         borderRadius: 8,
         marginBottom: 40,
-        width: '80%', // 确保释义区域的宽度不会占满整个屏幕
+        width: '80%',
         alignItems: 'center',
-        height: 150, // 增加释义区域的高度
+        height: 150,
         justifyContent: 'center',
-        alignSelf: 'center', // 居中对齐
+        alignSelf: 'center',
     },
     definitionScrollView: {
-        flexGrow: 1, // 使内容在ScrollView中充满区域
+        flexGrow: 1,
         justifyContent: 'center',
     },
     definitionToggle: {
-        // backgroundColor: '#ccc',
         padding: 12,
         borderRadius: 8,
         width: '100%',
@@ -184,8 +192,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#777',
         textAlign: 'center',
-        paddingHorizontal: 20, // 给释义增加左右内边距，让文字不显得紧凑
-        lineHeight: 28, // 使释义的行高更加适合
+        paddingHorizontal: 20,
+        lineHeight: 28,
     },
     nextButton: {
         backgroundColor: '#2b4eff',
@@ -193,13 +201,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         borderRadius: 8,
         marginTop: 30,
-        width: '50%', // 确保按钮的宽度适中
-        alignSelf: 'center', // 居中对齐
+        width: '50%',
+        alignSelf: 'center',
     },
     nextButtonText: {
         color: '#fff',
         fontSize: 14,
-        textAlign: 'center'
+        textAlign: 'center',
     },
 });
 
