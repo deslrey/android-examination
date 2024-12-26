@@ -4,7 +4,7 @@ import WordStorageService from '../../db/WordStorageService';
 import Icon from 'react-native-vector-icons/FontAwesome5'; // 引入FontAwesome5的图标组件
 import Sound from 'react-native-sound'; // 引入音频库
 
-const LearnComponent = () => {
+const LearnComponent = ({ navigation, route }) => {
     const [words, setWords] = useState([]); // 存储单词列表
     const [currentWordIndex, setCurrentWordIndex] = useState(0); // 当前显示的单词索引
     const [showDefinition, setShowDefinition] = useState(false); // 控制是否显示释义
@@ -49,6 +49,14 @@ const LearnComponent = () => {
 
     return (
         <View style={styles.container}>
+            {/* 顶部导航栏 */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Icon name="arrow-left" size={20} color="#fff" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>刷单词</Text>
+            </View>
+
             {/* 显示notation, word, trans */}
             {currentWord?.notation && (
                 <Text style={styles.notation}>{currentWord?.notation}</Text>
@@ -104,19 +112,37 @@ const LearnComponent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
         backgroundColor: '#f5f5f5',
     },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', // 主轴方向居中
+        backgroundColor: '#2b4eff',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+    },
+    backButton: {
+        position: 'absolute', // 绝对定位
+        left: 16, // 距离左侧一定距离
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#ffffff',
+        textAlign: 'center',
+    },
     notation: {
-        fontSize: 32,
+        paddingTop: 20,
+        fontSize: 28,
         fontWeight: 'bold',
         color: '#444',
         marginBottom: 15,
+        textAlign: 'center'
     },
     word: {
-        fontSize: 36,
+        textAlign: 'center',
+        fontSize: 26,
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 30,
@@ -124,6 +150,7 @@ const styles = StyleSheet.create({
     audioContainer: {
         flexDirection: 'row', // 将音频图标横向排列
         marginBottom: 30,
+        justifyContent: 'center', // 图标居中
     },
     iconSpacing: {
         marginLeft: 15, // 设置图标之间的间距
@@ -133,10 +160,11 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 8,
         marginBottom: 40,
-        width: '85%',
+        width: '80%', // 确保释义区域的宽度不会占满整个屏幕
         alignItems: 'center',
         height: 150, // 增加释义区域的高度
         justifyContent: 'center',
+        alignSelf: 'center', // 居中对齐
     },
     definitionScrollView: {
         flexGrow: 1, // 使内容在ScrollView中充满区域
@@ -161,6 +189,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         borderRadius: 8,
         marginTop: 30,
+        width: '80%', // 确保按钮的宽度适中
+        alignSelf: 'center', // 居中对齐
     },
     nextButtonText: {
         color: '#fff',
