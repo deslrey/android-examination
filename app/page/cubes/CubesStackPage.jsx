@@ -70,6 +70,7 @@ const CubesStackPage = () => {
                 <ScrollView>
                     {words.map((word) => (
                         <View key={word.id} style={styles.wordItem}>
+                            {word.notation && <Text style={styles.wordNotation}>{word.notation}</Text>}
                             <Text style={styles.wordText}>{word.word}</Text>
                             <Text style={styles.wordDetails}>翻译: {word.trans}</Text>
                         </View>
@@ -193,6 +194,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#555',
         marginVertical: 2,
+    },
+    wordNotation: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
     },
 });
 
