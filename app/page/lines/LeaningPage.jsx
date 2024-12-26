@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Tab, TabView, Text, Card } from '@rneui/themed';
+import Icon from 'react-native-vector-icons/FontAwesome6'; // 用于返回按钮的图标
 import axios from 'axios';
 
 const PrefixApi = 'http://192.168.31.10:808/deslre';
@@ -8,7 +9,7 @@ const url = {
     getAllWordBooks: '/books/getAllWordBooks',
 };
 
-export default function LearningPage() {
+export default function LearningPage({ navigation }) {
     const [activeCategoryIndex, setActiveCategoryIndex] = useState(0); // 控制大类
     const [activeSubCategory, setActiveSubCategory] = useState(null); // 控制小类
     const [categories, setCategories] = useState([]); // 后端获取的分类数据
@@ -76,13 +77,6 @@ export default function LearningPage() {
         getAllWordBooks();
     }, []);
 
-    // 点击卡片事件
-    const handleCardPress = (book) => {
-        console.log('Clicked Book: ', book);
-        // 在这里可以执行相关的逻辑，比如跳转到书籍详情页
-        // 例如：navigation.navigate('BookDetails', { bookId: book.id });
-    };
-
     // 渲染内容
     if (loading) {
         return <ActivityIndicator size="large" color="#6200ea" style={styles.loader} />;
@@ -90,6 +84,13 @@ export default function LearningPage() {
 
     return (
         <>
+            {/* 顶部导航 */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Icon name="arrow-left" size={20} color="#fff" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>学习页面</Text>
+            </View>
             {/* 顶部大类 Tab */}
             <Tab
                 value={activeCategoryIndex}
@@ -133,17 +134,12 @@ export default function LearningPage() {
                             {activeSubCategory ? (
                                 // 找到选中的小类
                                 category.topics.find((t) => t.id === activeSubCategory)?.books.map((book) => (
-                                    <Card
-                                        key={book.id}
-                                        containerStyle={styles.card}
-                                    // 点击卡片触发事件
+                                    <Card key={book.id} containerStyle={styles.card}
                                     >
-                                        <TouchableOpacity onPress={() => handleCardPress(book)}>
-                                            <Text h3>{book.bookName}</Text>
-                                            <Text style={styles.bookDetails}>包含单词数：{book.wordSum}</Text>
-                                            <Text style={styles.bookDetails}>语言分类：{book.languageCategory}</Text>
-                                            <Text style={styles.bookDetails}>标签：{book.tags}</Text>
-                                        </TouchableOpacity>
+                                        <Text h3>{book.bookName}</Text>
+                                        <Text style={styles.bookDetails}>包含单词数：{book.wordSum}</Text>
+                                        <Text style={styles.bookDetails}>语言分类：{book.languageCategory}</Text>
+                                        <Text style={styles.bookDetails}>标签：{book.tags}</Text>
                                     </Card>
                                 ))
                             ) : (
@@ -213,4 +209,22 @@ const styles = StyleSheet.create({
         color: '#555',
         marginTop: 5,
     },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', // 主轴方向居中
+        backgroundColor: '#2b4eff',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+    },
+    backButton: {
+        position: 'absolute', // 绝对定位
+        left: 16, // 距离左侧一定距离
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#ffffff',
+        textAlign: 'center',
+    }
 });
