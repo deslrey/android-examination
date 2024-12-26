@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
+        // paddingHorizontal: 16,
     },
     header: {
         flexDirection: 'row',
@@ -138,7 +139,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#444',
         marginBottom: 15,
-        textAlign: 'center'
+        textAlign: 'center',
+        lineHeight: 40, // 调整行高，增加可读性
     },
     word: {
         textAlign: 'center',
@@ -146,6 +148,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 30,
+        lineHeight: 36, // 调整行高，增加可读性
     },
     audioContainer: {
         flexDirection: 'row', // 将音频图标横向排列
@@ -182,6 +185,7 @@ const styles = StyleSheet.create({
         color: '#777',
         textAlign: 'center',
         paddingHorizontal: 20, // 给释义增加左右内边距，让文字不显得紧凑
+        lineHeight: 28, // 使释义的行高更加适合
     },
     nextButton: {
         backgroundColor: '#2b4eff',
@@ -189,12 +193,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         borderRadius: 8,
         marginTop: 30,
-        width: '80%', // 确保按钮的宽度适中
+        width: '50%', // 确保按钮的宽度适中
         alignSelf: 'center', // 居中对齐
     },
     nextButtonText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 14,
+        textAlign: 'center'
     },
 });
 
