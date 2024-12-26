@@ -1,75 +1,72 @@
 import { Text, View, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import WordStorageService from '../../db/WordStorageService';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome6'; // 引入图标组件
 
-
-export class CubesStackPage extends Component {
-    state = {
-        words: [],
-        currentTab: 'total', // 当前选中的标签: total, learned, notLearned, familiar
-    };
-
-    // 在组件挂载时获取所有单词数据
-    componentDidMount() {
-        this.loadWords();
-    }
+const CubesStackPage = () => {
+    const [words, setWords] = useState([]); // 存储单词数据
+    const [currentTab, setCurrentTab] = useState('total'); // 当前选中的标签
+    const navigation = useNavigation(); // 获取导航对象
 
     // 获取单词数据
-    loadWords = async () => {
+    useEffect(() => {
+        loadWords();
+    }, []);
+
+    // 获取所有单词
+    const loadWords = async () => {
         try {
             const words = await WordStorageService.getWords();
-            this.setState({ words });
+            setWords(words); // 更新状态
         } catch (error) {
             console.error('Error loading words:', error);
         }
     };
 
     // 计算不同类别的单词数
-    getTotalWordsCount = () => {
-        return this.state.words.length;
+    const getTotalWordsCount = () => {
+        return words.length;
     };
 
-    getLearnedWordsCount = () => {
-        return this.state.words.filter((word) => word.learningCount > 0).length;
+    const getLearnedWordsCount = () => {
+        return words.filter((word) => word.learningCount > 0).length;
     };
 
-    getNotLearnedWordsCount = () => {
-        return this.state.words.filter((word) => word.learningCount === 0).length;
+    const getNotLearnedWordsCount = () => {
+        return words.filter((word) => word.learningCount === 0).length;
     };
 
-    getFamiliarWordsCount = () => {
-        return this.state.words.filter((word) => word.isFamiliar).length;
+    const getFamiliarWordsCount = () => {
+        return words.filter((word) => word.isFamiliar).length;
     };
 
     // 渲染不同标签的内容
-    renderTabContent = () => {
-        const { currentTab, words } = this.state;
+    const renderTabContent = () => {
         let filteredWords = [];
-
         switch (currentTab) {
             case 'learned':
                 filteredWords = words.filter((word) => word.learningCount > 0);
-                return this.renderWordsList(filteredWords, '已学单词');
+                return renderWordsList(filteredWords, '已学单词');
             case 'notLearned':
                 filteredWords = words.filter((word) => word.learningCount === 0);
-                return this.renderWordsList(filteredWords, '未学单词');
+                return renderWordsList(filteredWords, '未学单词');
             case 'familiar':
                 filteredWords = words.filter((word) => word.isFamiliar);
-                return this.renderWordsList(filteredWords, '标熟单词');
+                return renderWordsList(filteredWords, '标熟单词');
             default:
-                return this.renderWordsList(words, '所有单词');
+                return renderWordsList(words, '所有单词');
         }
     };
 
     // 渲染单词列表
-    renderWordsList = (words, title) => {
+    const renderWordsList = (words, title) => {
         if (words.length === 0) {
             return <Text>没有相关单词。</Text>;
         }
 
         return (
             <View>
-                {/* <Text style={styles.listTitle}>{title}</Text> */}
                 <ScrollView>
                     {words.map((word) => (
                         <View key={word.id} style={styles.wordItem}>
@@ -83,51 +80,80 @@ export class CubesStackPage extends Component {
     };
 
     // 切换标签
-    handleTabChange = (tab) => {
-        this.setState({ currentTab: tab });
+    const handleTabChange = (tab) => {
+        setCurrentTab(tab);
     };
 
-    render() {
-        return (
-            <View style={styles.container}>
-                {/* 导航栏 */}
-                <View style={styles.navbar}>
-                    <TouchableOpacity onPress={() => this.handleTabChange('total')}>
-                        <Text style={[styles.navItem, this.state.currentTab === 'total' && styles.activeTab]}>
-                            总数
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.handleTabChange('learned')}>
-                        <Text style={[styles.navItem, this.state.currentTab === 'learned' && styles.activeTab]}>
-                            已学
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.handleTabChange('notLearned')}>
-                        <Text style={[styles.navItem, this.state.currentTab === 'notLearned' && styles.activeTab]}>
-                            未学
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.handleTabChange('familiar')}>
-                        <Text style={[styles.navItem, this.state.currentTab === 'familiar' && styles.activeTab]}>
-                            标熟
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+    // 返回按钮的点击事件
+    const handleBackButton = () => {
+        navigation.goBack(); // 使用导航返回上一个页面
+    };
 
-                {/* 标签内容 */}
-                <View style={styles.tabContent}>
-                    {this.renderTabContent()}
-                </View>
+    return (
+        <View style={styles.container}>
+            {/* 顶部导航栏 */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={handleBackButton} style={styles.backButton}>
+                    <Icon name="arrow-left" size={20} color="#fff" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>单词管理</Text>
             </View>
-        );
-    }
-}
+
+            {/* 标签导航栏 */}
+            <View style={styles.navbar}>
+                <TouchableOpacity onPress={() => handleTabChange('total')}>
+                    <Text style={[styles.navItem, currentTab === 'total' && styles.activeTab]}>
+                        总数 ({getTotalWordsCount()})
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleTabChange('learned')}>
+                    <Text style={[styles.navItem, currentTab === 'learned' && styles.activeTab]}>
+                        已学 ({getLearnedWordsCount()})
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleTabChange('notLearned')}>
+                    <Text style={[styles.navItem, currentTab === 'notLearned' && styles.activeTab]}>
+                        未学 ({getNotLearnedWordsCount()})
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleTabChange('familiar')}>
+                    <Text style={[styles.navItem, currentTab === 'familiar' && styles.activeTab]}>
+                        标熟 ({getFamiliarWordsCount()})
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* 标签内容 */}
+            <View style={styles.tabContent}>
+                {renderTabContent()}
+            </View>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        // padding: 20,
         backgroundColor: '#f5f5f5',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', // 主轴方向居中
+        backgroundColor: '#2b4eff',
+        width: '100%',
+        paddingVertical: 12,
+    },
+    backButton: {
+        position: 'absolute', // 绝对定位
+        left: 16, // 距离左侧一定距离
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#ffffff',
+        textAlign: 'center',
     },
     navbar: {
         flexDirection: 'row',
@@ -148,12 +174,6 @@ const styles = StyleSheet.create({
     tabContent: {
         marginTop: 20,
     },
-    listTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#333',
-    },
     wordItem: {
         padding: 10,
         backgroundColor: '#fff',
@@ -173,11 +193,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#555',
         marginVertical: 2,
-    },
-    separator: {
-        borderBottomWidth: 1,
-        borderColor: '#eee',
-        marginVertical: 8,
     },
 });
 
