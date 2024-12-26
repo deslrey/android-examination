@@ -23,6 +23,19 @@ const getUserInfo = async () => {
     }
 };
 
+// 更新用户昵称
+const updateUserName = async (newName) => {
+    try {
+        const userInfo = await getUserInfo();  // 获取当前保存的用户信息
+        if (userInfo) {
+            userInfo.name = newName;  // 更新昵称
+            await saveUserInfo(userInfo);  // 保存更新后的用户信息
+        }
+    } catch (error) {
+        console.error('更新用户昵称失败:', error);
+    }
+};
+
 // 保存用户头像
 const saveUserAvatar = async (avatarBase64) => {
     try {
@@ -58,5 +71,6 @@ export default {
     getUserInfo,
     saveUserAvatar,
     getUserAvatar,
+    updateUserName,  // 导出更新昵称的方法
     deleteUserInfo,
 };
