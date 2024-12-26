@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import WordStorageService from '../../db/WordStorageService';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome6'; // 引入图标组件
+import Sound from 'react-native-sound'; // 引入音频库
 
 const CubesStackPage = () => {
     const [words, setWords] = useState([]); // 存储单词数据
@@ -24,21 +25,49 @@ const CubesStackPage = () => {
         }
     };
 
-    // 计算不同类别的单词数
-    const getTotalWordsCount = () => {
-        return words.length;
+    // 播放发音
+    const playPronounce = (pronounceUrl) => {
+        // 使用Sound加载音频并播放
+        const sound = new Sound(pronounceUrl, null, (error) => {
+            if (error) {
+                console.log('Failed to load sound', error);
+                return;
+            }
+            sound.play((success) => {
+                if (!success) {
+                    console.log('Playback failed due to audio decoding errors');
+                }
+            });
+        });
     };
 
-    const getLearnedWordsCount = () => {
-        return words.filter((word) => word.learningCount > 0).length;
-    };
+    // 渲染单词列表
+    const renderWordsList = (words, title) => {
+        if (words.length === 0) {
+            return <Text style={{ fontSize: 20, textAlign: 'center' }}>没有相关单词</Text>;
+        }
 
-    const getNotLearnedWordsCount = () => {
-        return words.filter((word) => word.learningCount === 0).length;
-    };
-
-    const getFamiliarWordsCount = () => {
-        return words.filter((word) => word.isFamiliar).length;
+        return (
+            <View>
+                <ScrollView>
+                    {words.map((word) => (
+                        <View key={word.id} style={styles.wordItem}>
+                            {word.notation && <Text style={styles.wordNotation}>{word.notation}</Text>}
+                            <View style={styles.wordRow}>
+                                <Text style={styles.wordText}>{word.word}</Text>
+                                {/* 如果有发音字段，展示喇叭图标并绑定播放事件 */}
+                                {(word.pronounce || word.amerPronoun) && (
+                                    <TouchableOpacity onPress={() => playPronounce(word.pronounce || word.amerPronoun)}>
+                                        <Icon name="volume-high" size={24} color="#2b4eff" />
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                            <Text style={styles.wordDetails}>翻译: {word.trans}</Text>
+                        </View>
+                    ))}
+                </ScrollView>
+            </View>
+        );
     };
 
     // 渲染不同标签的内容
@@ -59,25 +88,21 @@ const CubesStackPage = () => {
         }
     };
 
-    // 渲染单词列表
-    const renderWordsList = (words, title) => {
-        if (words.length === 0) {
-            return <Text>没有相关单词。</Text>;
-        }
+    // 计算不同类别的单词数
+    const getTotalWordsCount = () => {
+        return words.length;
+    };
 
-        return (
-            <View>
-                <ScrollView>
-                    {words.map((word) => (
-                        <View key={word.id} style={styles.wordItem}>
-                            {word.notation && <Text style={styles.wordNotation}>{word.notation}</Text>}
-                            <Text style={styles.wordText}>{word.word}</Text>
-                            <Text style={styles.wordDetails}>翻译: {word.trans}</Text>
-                        </View>
-                    ))}
-                </ScrollView>
-            </View>
-        );
+    const getLearnedWordsCount = () => {
+        return words.filter((word) => word.learningCount > 0).length;
+    };
+
+    const getNotLearnedWordsCount = () => {
+        return words.filter((word) => word.learningCount === 0).length;
+    };
+
+    const getFamiliarWordsCount = () => {
+        return words.filter((word) => word.isFamiliar).length;
     };
 
     // 切换标签
@@ -135,7 +160,6 @@ const CubesStackPage = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // padding: 20,
         backgroundColor: '#f5f5f5',
     },
     header: {
@@ -184,6 +208,11 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
+    },
+    wordRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between', // 将单词和喇叭图标放在左右两边
+        alignItems: 'center', // 垂直居中对齐
     },
     wordText: {
         fontSize: 16,
