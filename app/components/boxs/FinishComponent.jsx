@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';  // 引入 Ionicons 图标
 import WordStorageService from '../../db/WordStorageService';
 
 const FinishComponent = ({ route, navigation }) => {
     // 从 route.params 中解构出传递过来的单词列表
     const { words } = route.params || [];
+
+    // 管理单词的熟悉状态
+    const [updatedWords, setUpdatedWords] = useState(words);
 
     useEffect(() => {
         if (words) {
@@ -40,11 +44,29 @@ const FinishComponent = ({ route, navigation }) => {
         }
     };
 
+    // 更新单词的熟悉状态
+    const toggleFamiliarStatus = async (word) => {
+        try {
+            const newFamiliarStatus = !word.isFamiliar;  // 切换熟悉状态
+            await WordStorageService.updateFamiliarStatus(word.id, newFamiliarStatus);
+
+            // 更新本地状态
+            const updatedWordList = updatedWords.map(w =>
+                w.id === word.id ? { ...w, isFamiliar: newFamiliarStatus } : w
+            );
+            setUpdatedWords(updatedWordList);  // 更新单词列表
+
+            console.log(`Word ${word.word} familiar status updated to: ${newFamiliarStatus}`);
+        } catch (error) {
+            console.error('Error updating familiar status:', error);
+        }
+    };
+
     // 处理“学习更多”按钮点击事件，跳转到 Learn 页面并更新所有单词的学习数据
     const handleLearnMore = async () => {
         try {
             // 对每个单词更新学习次数和复习日期
-            for (const word of words) {
+            for (const word of updatedWords) {
                 await updateWordData(word);
             }
 
@@ -62,7 +84,7 @@ const FinishComponent = ({ route, navigation }) => {
     const handleGoHome = async () => {
         try {
             // 对每个单词更新学习次数和复习日期
-            for (const word of words) {
+            for (const word of updatedWords) {
                 await updateWordData(word);
             }
 
@@ -82,13 +104,22 @@ const FinishComponent = ({ route, navigation }) => {
 
             {/* 如果传递了单词，显示每个单词 */}
             <ScrollView style={styles.scrollContainer}>
-                {words && words.map((word, index) => (
+                {updatedWords && updatedWords.map((word, index) => (
                     <View key={index} style={styles.wordContainer}>
                         {/* 判断如果 notation 不为 null 就显示 notation，否则显示 word */}
                         <Text style={styles.word}>
                             {word.notation ? word.notation : word.word}
                         </Text>
                         <Text style={styles.translation}>{word.trans}</Text>
+
+                        {/* 添加星星图标，并点击切换熟悉状态 */}
+                        <TouchableOpacity onPress={() => toggleFamiliarStatus(word)} style={styles.starButton}>
+                            <Ionicons
+                                name={word.isFamiliar ? 'star-sharp' : 'star-outline'} // 切换图标
+                                size={20}
+                                color={word.isFamiliar ? '#FFD700' : '#ccc'} // 根据熟悉状态改变颜色
+                            />
+                        </TouchableOpacity>
                     </View>
                 ))}
             </ScrollView>
@@ -131,15 +162,23 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 4,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
     word: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#333',
+        flex: 1,
     },
     translation: {
         fontSize: 16,
         color: '#777',
+        flex: 1,
+    },
+    starButton: {
+        marginLeft: 10,
     },
     buttonContainer: {
         marginTop: 20,
