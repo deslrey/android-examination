@@ -42,6 +42,10 @@ const HomePage = () => {
         navigation.navigate('Profile');  // 假设个人中心页面名称是 "Profile"
     };
 
+    const toTest = () => {
+        navigation.navigate('Test');  // 假设个人中心页面名称是 "Profile"
+    }
+
     return (
         <View style={styles.container}>
             <ImageBackground source={image} style={styles.image}>
@@ -66,6 +70,9 @@ const HomePage = () => {
                     </TouchableOpacity>
                     <TouchableOpacity onPress={toLeaning}>
                         <Icon name="lines-leaning" size={30} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={toTest}>
+                        <Icon name="java" size={30} color="black" />
                     </TouchableOpacity>
                 </View>
             </ImageBackground>

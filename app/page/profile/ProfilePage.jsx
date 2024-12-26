@@ -18,6 +18,8 @@ const ProfilePage = () => {
         const loadUserAvatar = async () => {
             try {
                 const storedAvatar = await UserStorageService.getUserAvatar();
+                const storeUser = await UserStorageService.getUserInfo();
+                setUser(storeUser)
                 console.log('从本地存储获取到的头像:', storedAvatar); // 打印头像路径或数据
                 if (storedAvatar) {
                     // 如果头像是 Base64 格式
