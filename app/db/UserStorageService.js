@@ -36,6 +36,46 @@ const updateUserName = async (newName) => {
     }
 };
 
+// 更新用户性别
+const updateUserGender = async (newGender) => {
+    try {
+        const userInfo = await getUserInfo();  // 获取当前保存的用户信息
+        if (userInfo) {
+            userInfo.gender = newGender;  // 更新性别
+            await saveUserInfo(userInfo);  // 保存更新后的用户信息
+        }
+    } catch (error) {
+        console.error('更新用户性别失败:', error);
+    }
+};
+
+// 更新用户手机号
+const updateUserPhone = async (newPhone) => {
+    try {
+        const userInfo = await getUserInfo();  // 获取当前保存的用户信息
+        if (userInfo) {
+            userInfo.phone = newPhone;  // 更新手机号
+            await saveUserInfo(userInfo);  // 保存更新后的用户信息
+        }
+    } catch (error) {
+        console.error('更新用户手机号失败:', error);
+    }
+};
+
+// 更新用户邮箱
+const updateUserEmail = async (newEmail) => {
+    try {
+        const userInfo = await getUserInfo();  // 获取当前保存的用户信息
+        if (userInfo) {
+            userInfo.email = newEmail;  // 更新邮箱
+            await saveUserInfo(userInfo);  // 保存更新后的用户信息
+        }
+    } catch (error) {
+        console.error('更新用户邮箱失败:', error);
+    }
+};
+
+
 // 保存用户头像
 const saveUserAvatar = async (avatarBase64) => {
     try {
@@ -73,4 +113,6 @@ export default {
     getUserAvatar,
     updateUserName,  // 导出更新昵称的方法
     deleteUserInfo,
+    updateUserGender,
+    updateUserPhone
 };
