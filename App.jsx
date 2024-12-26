@@ -31,7 +31,7 @@ const App = () => {
   return (
     <MessageProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Test">
+        <Stack.Navigator initialRouteName="Leaning">
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
           <Stack.Screen name="PhoneRegister" component={PhoneRegister} options={{ headerShown: false }} />

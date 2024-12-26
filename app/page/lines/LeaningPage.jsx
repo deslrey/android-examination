@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Tab, TabView, Text, Card } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/FontAwesome6'; // 用于返回按钮的图标
+import StorageService from '../../db/StorageService';
 import axios from 'axios';
+
 
 const PrefixApi = 'http://192.168.31.10:808/deslre';
 const url = {
@@ -72,6 +74,14 @@ export default function LearningPage({ navigation }) {
         }
     };
 
+    const handleCardPress = (book) => {
+        // console.log('Clicked Book: ', book);
+        // 先清空当前数据信息
+        StorageService.clearAllBooks()
+        // 保存书籍信息
+        StorageService.saveBook(book)
+    };
+
     // 从后端获取数据
     useEffect(() => {
         getAllWordBooks();
@@ -136,10 +146,12 @@ export default function LearningPage({ navigation }) {
                                 category.topics.find((t) => t.id === activeSubCategory)?.books.map((book) => (
                                     <Card key={book.id} containerStyle={styles.card}
                                     >
-                                        <Text h3>{book.bookName}</Text>
-                                        <Text style={styles.bookDetails}>包含单词数：{book.wordSum}</Text>
-                                        <Text style={styles.bookDetails}>语言分类：{book.languageCategory}</Text>
-                                        <Text style={styles.bookDetails}>标签：{book.tags}</Text>
+                                        <TouchableOpacity onPress={() => handleCardPress(book)}>
+                                            <Text h3>{book.bookName}</Text>
+                                            <Text style={styles.bookDetails}>包含单词数：{book.wordSum}</Text>
+                                            <Text style={styles.bookDetails}>语言分类：{book.languageCategory}</Text>
+                                            <Text style={styles.bookDetails}>标签：{book.tags}</Text>
+                                        </TouchableOpacity>
                                     </Card>
                                 ))
                             ) : (
