@@ -65,10 +65,13 @@ const NameComponent = () => {
                 placeholder="请输入新的昵称"
                 value={name}
                 onChangeText={setName}
+                placeholderTextColor="#bbb"
             />
 
             {/* 保存按钮 */}
-            <Button title="保存" onPress={updateName} />
+            <TouchableOpacity style={styles.saveButton} onPress={updateName}>
+                <Text style={styles.saveButtonText}>保存</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -97,12 +100,29 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     input: {
-        height: 40,
+        height: 50,
         borderColor: '#ccc',
         borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
+        borderRadius: 10,
+        paddingHorizontal: 16,
+        fontSize: 16,
         marginBottom: 20,
+        marginTop: 40,
+        backgroundColor: '#f8f8f8',
+    },
+    saveButton: {
+        backgroundColor: '#2b4eff',
+        paddingVertical: 12,
+        paddingHorizontal: 30,
+        borderRadius: 8,
+        marginTop: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    saveButtonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
 
