@@ -76,7 +76,6 @@ export default function LearningPage({ navigation }) {
         }
     };
 
-
     // 获取数据并设置到 state
     const getWordData = async (id) => {
         try {
@@ -89,11 +88,24 @@ export default function LearningPage({ navigation }) {
             const result = response.data;
 
             if (result.code === 200) {
-                const data = result.data
+                const data = result.data;
+
                 // 遍历每个单词对象，保存到 AsyncStorage
                 for (const word of data) {
-                    await WordStorageService.saveWord(word);
+                    // 为每个单词添加字段
+                    const wordWithFlags = {
+                        ...word,
+                        isLearned: false,         // 初始时未学习
+                        isFamiliar: false,        // 初始时未标熟
+                        nextReviewDate: new Date(), // 下一次复习日期默认是当前日期
+                        learningCount: 0          // 初始学习次数为 0
+                    };
+
+                    // 保存单词到本地存储
+                    await WordStorageService.saveWord(wordWithFlags);
                 }
+
+                console.log('Words saved successfully!');
             } else {
                 console.error('Error fetching data:', result.message);
             }
@@ -101,6 +113,8 @@ export default function LearningPage({ navigation }) {
             console.error('Request failed:', error);
         }
     };
+
+
 
 
     const handleCardPress = (book) => {

@@ -1,12 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const STORAGE_KEY = 'savedWords';
+const WORD_STORAGE_KEY = 'savedWords';
 
 class WordStorageService {
-    // 获取所有保存的单词
+    // 获取所有单词
     static async getWords() {
         try {
-            const storedWords = await AsyncStorage.getItem(STORAGE_KEY);
+            const storedWords = await AsyncStorage.getItem(WORD_STORAGE_KEY);
             return storedWords ? JSON.parse(storedWords) : [];
         } catch (error) {
             console.error('Error getting words:', error);
@@ -27,46 +27,77 @@ class WordStorageService {
                 // 添加新的单词
                 savedWords.push(word);
             }
-            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(savedWords));
+            await AsyncStorage.setItem(WORD_STORAGE_KEY, JSON.stringify(savedWords));
             console.log('Word saved:', word);
         } catch (error) {
             console.error('Error saving word:', error);
         }
     }
 
-    // 删除单词
-    static async deleteWord(wordId) {
+    // 更新单词的学习次数
+    static async updateLearningCount(wordId, learningCount) {
         try {
             const savedWords = await this.getWords();
-            const updatedWords = savedWords.filter((word) => word.id !== wordId);
-            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedWords));
-            console.log('Word deleted:', wordId);
+            const wordIndex = savedWords.findIndex(w => w.id === wordId);
+            if (wordIndex !== -1) {
+                const updatedWord = savedWords[wordIndex];
+                updatedWord.learningCount = learningCount;
+
+                savedWords[wordIndex] = updatedWord;
+                await AsyncStorage.setItem(WORD_STORAGE_KEY, JSON.stringify(savedWords));
+                console.log('Word learning count updated:', updatedWord);
+            } else {
+                console.log('Word not found for updating learning count');
+            }
         } catch (error) {
-            console.error('Error deleting word:', error);
+            console.error('Error updating learning count:', error);
         }
     }
 
-    // 更新单词信息（根据 wordId 更新）
-    static async updateWord(wordId, updatedWord) {
+    // 更新单词的标熟状态
+    static async updateFamiliarStatus(wordId, isFamiliar) {
         try {
             const savedWords = await this.getWords();
-            const wordIndex = savedWords.findIndex((word) => word.id === wordId);
+            const wordIndex = savedWords.findIndex(w => w.id === wordId);
             if (wordIndex !== -1) {
-                savedWords[wordIndex] = { ...savedWords[wordIndex], ...updatedWord };
-                await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(savedWords));
-                console.log('Word updated:', updatedWord);
+                const updatedWord = savedWords[wordIndex];
+                updatedWord.isFamiliar = isFamiliar;
+
+                savedWords[wordIndex] = updatedWord;
+                await AsyncStorage.setItem(WORD_STORAGE_KEY, JSON.stringify(savedWords));
+                console.log('Word familiar status updated:', updatedWord);
             } else {
-                console.log('Word not found for update');
+                console.log('Word not found for updating familiar status');
             }
         } catch (error) {
-            console.error('Error updating word:', error);
+            console.error('Error updating familiar status:', error);
+        }
+    }
+
+    // 更新单词的下一次复习日期
+    static async updateNextReviewDate(wordId, nextReviewDate) {
+        try {
+            const savedWords = await this.getWords();
+            const wordIndex = savedWords.findIndex(w => w.id === wordId);
+            if (wordIndex !== -1) {
+                const updatedWord = savedWords[wordIndex];
+                updatedWord.nextReviewDate = nextReviewDate;
+
+                savedWords[wordIndex] = updatedWord;
+                await AsyncStorage.setItem(WORD_STORAGE_KEY, JSON.stringify(savedWords));
+                console.log('Word next review date updated:', updatedWord);
+            } else {
+                console.log('Word not found for updating next review date');
+            }
+        } catch (error) {
+            console.error('Error updating next review date:', error);
         }
     }
 
     // 清空所有单词
     static async clearAllWords() {
         try {
-            await AsyncStorage.removeItem(STORAGE_KEY);
+            await AsyncStorage.removeItem(WORD_STORAGE_KEY);
             console.log('All words cleared');
         } catch (error) {
             console.error('Error clearing words:', error);
