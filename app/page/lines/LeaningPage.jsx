@@ -48,7 +48,11 @@ export default function LearningPage() {
             console.log('result ======> ', response.data);
             const result = groupBooksByLanguageAndTags(response.data.data);
             setCategories(result);
-            setActiveSubCategory(null);
+
+            // 设置每个大类的小类默认选中第一个
+            if (result.length > 0) {
+                setActiveSubCategory(result[0].topics[0]?.id || null);
+            }
         } catch (error) {
             console.error('请求错误', error);
         } finally {
@@ -71,7 +75,10 @@ export default function LearningPage() {
             {/* 顶部大类 Tab */}
             <Tab
                 value={activeCategoryIndex}
-                onChange={setActiveCategoryIndex}
+                onChange={(index) => {
+                    setActiveCategoryIndex(index);
+                    setActiveSubCategory(categories[index].topics[0]?.id || null); // 切换大类时默认选中第一个小类
+                }}
                 indicatorStyle={styles.indicator}
                 variant="primary"
             >
@@ -89,7 +96,6 @@ export default function LearningPage() {
                 {categories.map((category, idx) => (
                     <TabView.Item key={idx} style={styles.tabViewItem}>
                         <ScrollView>
-
                             {/* 小类选择横向展示 */}
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.subCategoryContainer}>
                                 {category.topics.map((topic) => (
