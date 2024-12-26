@@ -192,7 +192,8 @@ const styles = StyleSheet.create({
         borderRadius: width * 0.15,
         borderWidth: 3,
         borderColor: '#00bcd4',
-        marginBottom: 20,
+        marginBottom: 10,
+        marginTop: 10
     },
     infoContainer: {
         width: '100%',
