@@ -113,7 +113,7 @@ const App = () => {
               };
             },
           }} />
-          <Stack.Screen name="updateEmail" component={EmailComponent} options={{ title: '修改邮箱' }} />
+          <Stack.Screen name="updateEmail" component={EmailComponent} options={{ headerShown: false }} />
           <Stack.Screen name="updateGender" component={GenderComponent} options={{ headerShown: false }} />
           <Stack.Screen name="updateName" component={NameComponent} options={{ headerShown: false }} />
           <Stack.Screen name="updatePhone" component={PhoneComponent} options={{ headerShown: false }} />

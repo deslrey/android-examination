@@ -124,6 +124,11 @@ const ProfilePage = () => {
 
             {/* 用户信息 */}
             <View style={styles.infoContainer}>
+                <TouchableOpacity style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>账户ID</Text>
+                    <Text style={styles.infoValue}>{user.accountId || '未设置'}</Text>
+                </TouchableOpacity>
+
                 <TouchableOpacity style={styles.infoRow} onPress={updateName} activeOpacity={1}>
                     <Text style={styles.infoLabel}>昵称</Text>
                     <Text style={styles.infoValue}>{user.name || '未设置'}</Text>
@@ -132,11 +137,6 @@ const ProfilePage = () => {
                 <TouchableOpacity style={styles.infoRow} onPress={updateGender} activeOpacity={1}>
                     <Text style={styles.infoLabel}>性别</Text>
                     <Text style={styles.infoValue}>{user.gender || '未设置'}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>账户ID</Text>
-                    <Text style={styles.infoValue}>{user.accountId || '未设置'}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.infoRow} onPress={updatePhone} activeOpacity={1}>
