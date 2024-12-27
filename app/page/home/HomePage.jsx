@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ImageBackground, TouchableOpacity, Image } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native'; // 导入 useFocusEffect
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import BoxComponent from '../../components/boxs/BoxComponent';
 import SignInButton from '../../components/sign/SignInButton';
 import useHomePageLogic from '../../hooks/useHomePageLogic';
 import Icon from 'react-native-vector-icons/FontAwesome6';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import UserStorageService from '../../db/UserStorageService';
 
 const image = require('../../static/images/lbl.png');
@@ -30,11 +31,15 @@ const HomePage = () => {
             };
 
             loadUserAvatar();
-        }, []) // 确保依赖为空，避免重复绑定
+        }, [])
     );
 
     const goToProfile = () => {
         navigation.navigate('Profile');
+    };
+
+    const goToSearch = () => {
+        navigation.navigate('Search'); // 假设搜索界面的路由名称是 "Search"
     };
 
     const toTest = () => {
@@ -44,6 +49,11 @@ const HomePage = () => {
     return (
         <View style={styles.container}>
             <ImageBackground source={image} style={styles.image}>
+                {/* 右上角搜索按钮 */}
+                <TouchableOpacity style={styles.searchButton} onPress={goToSearch}>
+                    <Ionicons name="search" size={24} color="white" />
+                </TouchableOpacity>
+
                 <TouchableOpacity style={styles.avatarContainer} onPress={goToProfile}>
                     <Image source={avatarUri} style={styles.avatar} />
                 </TouchableOpacity>
@@ -83,6 +93,12 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         justifyContent: 'center',
         paddingBottom: 50,
+    },
+    searchButton: {
+        position: 'absolute',
+        top: 30, // 距离顶部的距离
+        right: 15, // 距离右侧的距离
+        zIndex: 1,
     },
     avatarContainer: {
         position: 'absolute',
