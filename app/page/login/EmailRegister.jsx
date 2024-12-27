@@ -6,13 +6,13 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
-// 更新后的邮箱验证正则
+// 表单验证规则
 const registerValidationSchema = Yup.object().shape({
   email: Yup.string()
     .matches(
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
       '请输入有效的邮箱地址'
-    ) // 邮箱格式验证
+    )
     .required('邮箱是必填项'),
   passWord: Yup.string()
     .min(6, '密码至少为6个字符')
@@ -20,40 +20,62 @@ const registerValidationSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('passWord'), null], '密码不一致')
     .required('确认密码是必填项'),
+  code: Yup.string()
+    .length(6, '验证码必须是6位数字')
+    .required('验证码是必填项'),
 });
 
 const PrefixApi = 'http://192.168.31.10:808/deslre';
 
 const EmailRegister = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
+
+  const handleGetCode = async (email) => {
+    if (!email) {
+      Alert.alert('请输入邮箱后获取验证码');
+      return;
+    }
+
+    setSendingCode(true);
+
+    try {
+      const response = await axios.post(`${PrefixApi}/getEmailCode`, { email });
+      if (response.data.code === 200) {
+        Alert.alert('验证码已发送', '请检查您的邮箱获取验证码');
+      } else {
+        Alert.alert('获取验证码失败', response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('获取验证码失败', '请稍后重试');
+    }
+
+    setSendingCode(false);
+  };
 
   const handleRegister = async (values) => {
     setLoading(true);
 
-    // 对密码进行哈希加密
     const hashedPassword = CryptoJS.SHA256(values.passWord).toString();
 
-    axios
-      .post(PrefixApi + '/userInfo/emailRegister', {
+    try {
+      const response = await axios.post(`${PrefixApi}/userInfo/emailRegister`, {
         email: values.email,
-        passWord: hashedPassword, // 发送哈希后的密码
-      }, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        }
-      })
-      .then(response => {
-        console.log(response.data);
-        Alert.alert(response.data.message);
-        if (response.data.code === 200) {
-          Alert.alert('跳转到主界面');
-          // navigation.navigate('BottonNavigator'); // 注册成功后跳转主界面
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        Alert.alert('注册失败', error.message);
+        passWord: hashedPassword,
+        code: values.code,
       });
+
+      if (response.data.code === 200) {
+        Alert.alert('注册成功', '跳转到主界面');
+        // navigation.navigate('BottonNavigator'); // 注册成功后跳转主界面
+      } else {
+        Alert.alert('注册失败', response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('注册失败', '请稍后重试');
+    }
 
     setLoading(false);
   };
@@ -62,7 +84,7 @@ const EmailRegister = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>邮箱注册</Text>
       <Formik
-        initialValues={{ email: '', passWord: '', confirmPassword: '' }}
+        initialValues={{ email: '', passWord: '', confirmPassword: '', code: '' }}
         validationSchema={registerValidationSchema}
         onSubmit={handleRegister}
       >
@@ -94,13 +116,28 @@ const EmailRegister = ({ navigation }) => {
               errorMessage={touched.confirmPassword && errors.confirmPassword}
               containerStyle={styles.inputContainer}
             />
+            <View style={styles.codeInputContainer}>
+              <Input
+                placeholder="验证码"
+                onChangeText={handleChange('code')}
+                onBlur={handleBlur('code')}
+                value={values.code}
+                errorMessage={touched.code && errors.code}
+                containerStyle={styles.codeInput}
+              />
+              <Button
+                title={sendingCode ? '发送中...' : '获取验证码'}
+                onPress={() => handleGetCode(values.email)}
+                disabled={sendingCode}
+                buttonStyle={styles.codeButton}
+              />
+            </View>
             <Button
               title={loading ? '注册中...' : '注册'}
               onPress={handleSubmit}
               loading={loading}
               buttonStyle={styles.button}
             />
-
             <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}>
               <View style={styles.customButton}>
                 <Text style={styles.buttonText}>已有账号？去登录</Text>
@@ -129,6 +166,31 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginBottom: 20,
+  },
+  codeInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  codeInput: {
+    flex: 2,
+  },
+  codeButton: {
+    flex: 1,
+    borderRadius: 8, // 圆角按钮
+    paddingVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2, // 添加阴影效果
+  },
+  codeButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   button: {
     backgroundColor: '#0066cc',
