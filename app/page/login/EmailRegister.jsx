@@ -5,6 +5,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import UserStorageService from '../../db/UserStorageService';
+
 
 // 表单验证规则
 const registerValidationSchema = Yup.object().shape({
@@ -32,7 +34,9 @@ const EmailRegister = ({ navigation }) => {
   const [sendingCode, setSendingCode] = useState(false);
 
   const handleGetCode = async (email) => {
-    if (!email) {
+    console.log('email ======> ', email);
+
+    if (email === '' | email === null) {
       Alert.alert('请输入邮箱后获取验证码');
       return;
     }
@@ -40,7 +44,12 @@ const EmailRegister = ({ navigation }) => {
     setSendingCode(true);
 
     try {
-      const response = await axios.post(`${PrefixApi}/getEmailCode`, { email });
+      const response = await axios.post(`${PrefixApi}/userInfo/getEmailCode`,
+        { email: email },
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      );
+      console.log('response =======> ', response.data);
+
       if (response.data.code === 200) {
         Alert.alert('验证码已发送', '请检查您的邮箱获取验证码');
       } else {
@@ -60,15 +69,24 @@ const EmailRegister = ({ navigation }) => {
     const hashedPassword = CryptoJS.SHA256(values.passWord).toString();
 
     try {
-      const response = await axios.post(`${PrefixApi}/userInfo/emailRegister`, {
-        email: values.email,
-        passWord: hashedPassword,
-        code: values.code,
-      });
+      const response = await axios.post(`${PrefixApi}/userInfo/emailRegister`,
+        {
+          email: values.email,
+          passWord: hashedPassword,
+          code: values.code,
+        },
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      );
+
 
       if (response.data.code === 200) {
+        const result = response.data.data
         Alert.alert('注册成功', '跳转到主界面');
-        // navigation.navigate('BottonNavigator'); // 注册成功后跳转主界面
+        // 跳转到 HomePage 页面
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'HomePage' }] // 跳转到 HomePage 页面，并重置栈
+        });
       } else {
         Alert.alert('注册失败', response.data.message);
       }
