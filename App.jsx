@@ -25,6 +25,7 @@ import PhoneComponent from './app/components/profile/PhoneComponent';
 import ChapterDetailComponent from './app/components/codes/ChapterDetailComponent';
 import GroupComponent from './app/components/codes/GroupComponent';
 import FinishComponent from './app/components/boxs/FinishComponent';
+import SearchPage from './app/page/search/SearchPage';
 
 const Stack = createStackNavigator(); // 创建 Stack Navigator
 
@@ -32,7 +33,7 @@ const App = () => {
   return (
     <MessageProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="HomePage">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
           <Stack.Screen name="PhoneRegister" component={PhoneRegister} options={{ headerShown: false }} />
@@ -44,6 +45,7 @@ const App = () => {
           />
           <Stack.Screen name="Review" component={ReviewComponent} options={{ headerShown: false }} />
           <Stack.Screen name="Finish" component={FinishComponent} options={{ headerShown: false }} />
+          <Stack.Screen name="Search" component={SearchPage} options={{ headerShown: false }} />
           <Stack.Screen name="Code" component={CodePage} options={{
             headerShown: false,
             cardStyleInterpolator: ({ current, next, layouts }) => {
