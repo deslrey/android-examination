@@ -78,9 +78,21 @@ const EmailRegister = ({ navigation }) => {
         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
       );
 
+      console.log('data ======> ', response.data);
 
       if (response.data.code === 200) {
         const result = response.data.data
+
+
+        await UserStorageService.deleteUserInfo()
+        const user = {
+          accountId: result.userId,
+          name: result.nickName,
+          gender: '',
+          phone: '',
+          email: result.email
+        }
+        await UserStorageService.saveUserInfo(user)
         Alert.alert('注册成功', '跳转到主界面');
         // 跳转到 HomePage 页面
         navigation.reset({
