@@ -1,78 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import { Text, Button } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native';
-import ImagePicker from 'react-native-image-crop-picker'; // 导入 image crop picker
-import Icon from 'react-native-vector-icons/FontAwesome6'; // 引入图标组件
-import UserStorageService from '../../db/UserStorageService'; // 导入 UserStorageService
+import { useNavigation, useIsFocused } from '@react-navigation/native'; // 导入 useIsFocused
+import ImagePicker from 'react-native-image-crop-picker';
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import UserStorageService from '../../db/UserStorageService';
 
-const { width } = Dimensions.get('window');  // 获取屏幕宽度
+const { width } = Dimensions.get('window');
 
 const ProfilePage = () => {
     const navigation = useNavigation();
+    const isFocused = useIsFocused(); // 检测当前页面是否聚焦
+    const [avatarUri, setAvatarUri] = useState(require('../../static/avatars/avatar.jpg'));
+    const [user, setUser] = useState({});
 
-    const [avatarUri, setAvatarUri] = useState(require('../../static/avatars/avatar.jpg')); // 默认头像
-    const [user, setUser] = useState({});  // 用户信息的状态
+    // 加载用户信息
+    const loadUserInfo = async () => {
+        try {
+            const storedAvatar = await UserStorageService.getUserAvatar();
+            const storedUser = await UserStorageService.getUserInfo();
+            setUser(storedUser);
 
-    useEffect(() => {
-        const loadUserAvatar = async () => {
-            try {
-                const storedAvatar = await UserStorageService.getUserAvatar();
-                const storeUser = await UserStorageService.getUserInfo();
-                setUser(storeUser)
-                console.log('从本地存储获取到的头像:', storedAvatar); // 打印头像路径或数据
-                if (storedAvatar) {
-                    // 如果头像是 Base64 格式
-                    if (storedAvatar.startsWith('data:image')) {
-                        setAvatarUri({ uri: storedAvatar });
-                    } else {
-                        // 如果头像是文件路径
-                        setAvatarUri({ uri: storedAvatar });
-                    }
+            if (storedAvatar) {
+                if (storedAvatar.startsWith('data:image')) {
+                    setAvatarUri({ uri: storedAvatar });
+                } else {
+                    setAvatarUri({ uri: storedAvatar });
                 }
-            } catch (error) {
-                console.error('加载头像时出错:', error);
             }
-        };
-
-        loadUserAvatar();
-    }, []);  // 组件加载时只执行一次
-
-    const updateName = () => {
-        navigation.navigate('updateName');
+        } catch (error) {
+            console.error('加载用户信息时出错:', error);
+        }
     };
 
-    const updateGender = () => {
-        navigation.navigate('updateGender');
-    };
+    // 当页面聚焦时重新加载用户信息
+    useEffect(() => {
+        if (isFocused) {
+            loadUserInfo();
+        }
+    }, [isFocused]);
 
-    const updatePhone = () => {
-        navigation.navigate('updatePhone');
-    };
-
-    const updateEmail = () => {
-        navigation.navigate('updateEmail');
-    };
-
-    // 头像点击事件，弹出选择框
+    // 点击头像更换
     const avatarClick = () => {
         Alert.alert('更换头像', '请选择头像来源', [
-            {
-                text: '从相册选择',
-                onPress: () => chooseAvatar('library'),
-            },
-            {
-                text: '拍照',
-                onPress: () => chooseAvatar('camera'),
-            },
-            {
-                text: '取消',
-                style: 'cancel',
-            },
+            { text: '从相册选择', onPress: () => chooseAvatar('library') },
+            { text: '拍照', onPress: () => chooseAvatar('camera') },
+            { text: '取消', style: 'cancel' },
         ]);
     };
 
-    // 选择头像来源
     const chooseAvatar = (source) => {
         const options = {
             cropping: true,
@@ -86,30 +62,22 @@ const ProfilePage = () => {
         if (source === 'library') {
             ImagePicker.openPicker(options)
                 .then((image) => {
-                    console.log('选择的头像路径:', image.path); // 打印路径
-                    setAvatarUri({ uri: image.path });  // 设置头像 URI
-                    UserStorageService.saveUserAvatar(image.path);  // 保存文件路径
+                    setAvatarUri({ uri: image.path });
+                    UserStorageService.saveUserAvatar(image.path);
                 })
-                .catch((error) => {
-                    console.log('图片选择错误: ', error);
-                });
+                .catch((error) => console.log('图片选择错误: ', error));
         } else if (source === 'camera') {
             ImagePicker.openCamera(options)
                 .then((image) => {
-                    console.log('拍照的头像路径:', image.path); // 打印路径
-                    setAvatarUri({ uri: image.path });  // 设置头像 URI
-                    UserStorageService.saveUserAvatar(image.path);  // 保存文件路径
+                    setAvatarUri({ uri: image.path });
+                    UserStorageService.saveUserAvatar(image.path);
                 })
-                .catch((error) => {
-                    console.log('拍照错误: ', error);
-                });
+                .catch((error) => console.log('拍照错误: ', error));
         }
     };
 
-
     return (
         <View style={styles.container}>
-            {/* 顶部导航栏 */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Icon name="arrow-left" size={20} color="#fff" />
@@ -117,40 +85,37 @@ const ProfilePage = () => {
                 <Text style={styles.headerTitle}>个人资料</Text>
             </View>
 
-            {/* 用户头像 */}
             <TouchableOpacity onPress={avatarClick}>
                 <Image source={avatarUri} style={styles.avatar} />
             </TouchableOpacity>
 
-            {/* 用户信息 */}
             <View style={styles.infoContainer}>
                 <TouchableOpacity style={styles.infoRow}>
                     <Text style={styles.infoLabel}>账户ID</Text>
                     <Text style={styles.infoValue}>{user.accountId || '未设置'}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.infoRow} onPress={updateName} activeOpacity={1}>
+                <TouchableOpacity style={styles.infoRow} onPress={() => navigation.navigate('updateName')}>
                     <Text style={styles.infoLabel}>昵称</Text>
                     <Text style={styles.infoValue}>{user.name || '未设置'}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.infoRow} onPress={updateGender} activeOpacity={1}>
+                <TouchableOpacity style={styles.infoRow} onPress={() => navigation.navigate('updateGender')}>
                     <Text style={styles.infoLabel}>性别</Text>
                     <Text style={styles.infoValue}>{user.gender || '未设置'}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.infoRow} onPress={updatePhone} activeOpacity={1}>
+                <TouchableOpacity style={styles.infoRow} onPress={() => navigation.navigate('updatePhone')}>
                     <Text style={styles.infoLabel}>手机号</Text>
                     <Text style={styles.infoValue}>{user.phone || '未设置'}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.infoRow} onPress={updateEmail} activeOpacity={1}>
+                <TouchableOpacity style={styles.infoRow} onPress={() => navigation.navigate('updateEmail')}>
                     <Text style={styles.infoLabel}>邮箱</Text>
                     <Text style={styles.infoValue}>{user.email || '未设置'}</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* 退出登录按钮 */}
             <Button
                 title="退出登录"
                 buttonStyle={styles.logoutButton}

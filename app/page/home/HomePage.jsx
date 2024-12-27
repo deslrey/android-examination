@@ -1,55 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ImageBackground, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; // 导入 useFocusEffect
 import BoxComponent from '../../components/boxs/BoxComponent';
 import SignInButton from '../../components/sign/SignInButton';
 import useHomePageLogic from '../../hooks/useHomePageLogic';
-import Icon from 'react-native-vector-icons/FontAwesome6';  // 导入图标库
-import UserStorageService from '../../db/UserStorageService'; // 导入本地存储服务
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import UserStorageService from '../../db/UserStorageService';
 
-const image = require('../../static/images/lbl.png'); // 背景图片
+const image = require('../../static/images/lbl.png');
 
 const HomePage = () => {
     const navigation = useNavigation();
     const { hasSignedIn, handleSignIn, toLearn, toReview, toCode, toCubesStack, toLeaning } = useHomePageLogic(navigation);
 
-    const [avatarUri, setAvatarUri] = useState(require('../../static/avatars/avatar.jpg')); // 默认头像
+    const [avatarUri, setAvatarUri] = useState(require('../../static/avatars/avatar.jpg'));
 
-    // 在组件加载时获取用户头像
-    useEffect(() => {
-        const loadUserAvatar = async () => {
-            try {
-                const storedAvatar = await UserStorageService.getUserAvatar(); // 从本地存储获取头像
-                if (storedAvatar) {
-                    // 如果头像是 Base64 格式
-                    if (storedAvatar.startsWith('data:image')) {
-                        setAvatarUri({ uri: storedAvatar });
-                    } else {
-                        // 如果头像是文件路径
-                        setAvatarUri({ uri: storedAvatar });
+    // 使用 useFocusEffect 确保每次页面获得焦点时重新加载头像
+    useFocusEffect(
+        React.useCallback(() => {
+            const loadUserAvatar = async () => {
+                try {
+                    const storedAvatar = await UserStorageService.getUserAvatar();
+                    if (storedAvatar) {
+                        setAvatarUri({ uri: storedAvatar.startsWith('data:image') ? storedAvatar : storedAvatar });
                     }
+                } catch (error) {
+                    console.error('加载头像时出错:', error);
                 }
-            } catch (error) {
-                console.error('加载头像时出错:', error);
-            }
-        };
+            };
 
-        loadUserAvatar();
-    }, []);  // 组件加载时只执行一次
+            loadUserAvatar();
+        }, []) // 确保依赖为空，避免重复绑定
+    );
 
-    // 跳转到个人中心
     const goToProfile = () => {
-        navigation.navigate('Profile');  // 假设个人中心页面名称是 "Profile"
+        navigation.navigate('Profile');
     };
 
     const toTest = () => {
-        navigation.navigate('Test');  // 假设个人中心页面名称是 "Profile"
-    }
+        navigation.navigate('Test');
+    };
 
     return (
         <View style={styles.container}>
             <ImageBackground source={image} style={styles.image}>
-                {/* 用户头像 */}
                 <TouchableOpacity style={styles.avatarContainer} onPress={goToProfile}>
                     <Image source={avatarUri} style={styles.avatar} />
                 </TouchableOpacity>
@@ -60,7 +54,6 @@ const HomePage = () => {
                     <BoxComponent title="Review" onPress={toReview} />
                 </View>
 
-                {/* 下面三个图标 */}
                 <View style={styles.iconContainer}>
                     <TouchableOpacity onPress={toCode}>
                         <Icon name="code" size={30} color="black" />
@@ -89,18 +82,18 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: 'cover',
         justifyContent: 'center',
-        paddingBottom: 50,  // 留出底部空间给图标
+        paddingBottom: 50,
     },
     avatarContainer: {
         position: 'absolute',
-        top: 30,  // 头像离顶部的距离
-        left: 15,  // 头像离左边的距离
-        zIndex: 1,  // 确保头像位于其他元素之上
+        top: 30,
+        left: 15,
+        zIndex: 1,
     },
     avatar: {
-        width: 40,  // 头像的宽度
-        height: 40,  // 头像的高度
-        borderRadius: 20,  // 使头像成为圆形
+        width: 40,
+        height: 40,
+        borderRadius: 20,
     },
     boxContainer: {
         flexDirection: 'row',
@@ -110,9 +103,9 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        position: 'absolute',  // 确保图标显示在底部
-        bottom: 30,  // 设置图标距离底部的距离
-        width: '100%',  // 确保图标容器的宽度填满整个屏幕
+        position: 'absolute',
+        bottom: 30,
+        width: '100%',
     },
 });
 
