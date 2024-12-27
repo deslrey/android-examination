@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6';
 import { Input, Button } from 'react-native-elements';
@@ -6,6 +6,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import UserStorageService from '../../db/UserStorageService';
 
 
 const loginValidationSchema = Yup.object().shape({
@@ -17,6 +18,23 @@ const PrefixApi = 'http://192.168.31.10:808/deslre'
 
 const LoginScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
+
+    // 检查是否已有用户登录
+    useEffect(() => {
+        const checkLogin = async () => {
+            const userInfo = await UserStorageService.getUserInfo();
+            if (userInfo) {
+                console.log('用户已登录:', userInfo);
+                // 跳转到 HomePage 页面
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'HomePage' }] // 跳转到 HomePage 页面，并重置栈
+                });
+            }
+        };
+        checkLogin();
+    }, []);
+
 
     const handleLogin = async (values) => {
         setLoading(true);
