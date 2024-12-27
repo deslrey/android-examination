@@ -33,6 +33,8 @@ const ReviewComponent = ({ navigation }) => {
         try {
             const updatedLearningCount = word.learningCount + 1;  // 增加学习次数
             const nextReviewDate = getNextReviewDate(updatedLearningCount);  // 获取新的复习日期
+            // 获取今天的日期（格式：YYYY-MM-DD）
+            const today = new Date().toISOString().split('T')[0];
 
             // 更新单词数据
             await WordStorageService.updateLearningCount(word.id, updatedLearningCount);
