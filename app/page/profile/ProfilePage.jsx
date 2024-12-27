@@ -76,6 +76,14 @@ const ProfilePage = () => {
         }
     };
 
+    const loginOut = () => {
+        UserStorageService.deleteUserInfo()
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }] // 跳转到 HomePage 页面，并重置栈
+        });
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -120,7 +128,7 @@ const ProfilePage = () => {
                 title="退出登录"
                 buttonStyle={styles.logoutButton}
                 titleStyle={styles.logoutButtonTitle}
-                onPress={() => console.log('退出登录')}
+                onPress={loginOut}
             />
         </View>
     );

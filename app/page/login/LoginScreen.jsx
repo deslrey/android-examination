@@ -47,14 +47,29 @@ const LoginScreen = ({ navigation }) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
-        console.error('LoginScreen === 30 ===> ', response.data);
+        console.log('LoginScreen === 30 ===> ', response.data);
+        const result = response.data.data
+
+        await UserStorageService.deleteUserInfo()
+        await UserStorageService.deleteUserInfo()
+        const user = {
+            accountId: result.userId,
+            name: result.nickName,
+            gender: '',
+            phone: result.phone,
+            email: result.email
+        }
+        await UserStorageService.saveUserInfo(user)
         setLoading(false);
         if (response === null) {
             Alert.alert('登录失败,服务器异常');
         } else if (response.data.code === 200) {
             setLoading(false);
             Alert.alert('跳转到主界面');
-            // navigation.navigate('BottonNavigator'); // 注册成功后跳转主界面
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'HomePage' }] // 跳转到 HomePage 页面，并重置栈
+            });
         } else {
             Alert.alert(response.data.message);
         }
