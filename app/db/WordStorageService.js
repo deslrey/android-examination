@@ -28,7 +28,7 @@ class WordStorageService {
                 savedWords.push(word);
             }
             await AsyncStorage.setItem(WORD_STORAGE_KEY, JSON.stringify(savedWords));
-            console.log('Word saved:', word);
+            // console.log('Word saved:', word);
         } catch (error) {
             console.error('Error saving word:', error);
         }
